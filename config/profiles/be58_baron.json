@@ -1,0 +1,65 @@
+{
+  "aircraft_id": "be58_baron",
+  "display_name": "Beechcraft Baron 58",
+  "engine_type": "piston",
+  "engine_count": 2,
+  "msfs_titles": [
+    "Beechcraft Baron G58 Asobo",
+    "Beechcraft Baron 58 Asobo"
+  ],
+  "fuel": {
+    "tank_count": 4,
+    "tank_names": ["left_main", "right_main", "left_aux", "right_aux"],
+    "total_capacity_gal": 166,
+    "usable_capacity_gal": 162,
+    "selector_positions": ["OFF", "LEFT_MAIN", "RIGHT_MAIN", "LEFT_AUX", "RIGHT_AUX"],
+    "normal_cruise_selector": "LEFT_MAIN",
+    "imbalance_advisory_pct": 10,
+    "imbalance_warning_pct": 20,
+    "minimum_fuel_warning_gal": 12
+  },
+  "engine": {
+    "rpm_range": [600, 2700],
+    "rpm_cruise_typical": [2300, 2500],
+    "manifold_pressure_range_inhg": [15, 30],
+    "cht_normal_range_f": [200, 420],
+    "cht_redline_f": 460,
+    "cht_trend_advisory_f_per_min": 5,
+    "cht_trend_warning_f_per_min": 10,
+    "egt_normal_range_f": [1100, 1500],
+    "egt_redline_f": 1650,
+    "oil_pressure_normal_psi": [30, 60],
+    "oil_pressure_minimum_psi": 10,
+    "oil_pressure_redline_psi": 100,
+    "oil_pressure_drop_rate_warning_psi_per_min": 8,
+    "oil_temp_normal_range_f": [100, 240],
+    "oil_temp_redline_f": 245,
+    "fuel_flow_cruise_gph": [12, 16]
+  },
+  "electrical": {
+    "main_bus_normal_v": [13.5, 14.5],
+    "main_bus_minimum_v": 12.0,
+    "battery_bus_minimum_v": 11.0
+  },
+  "vacuum": {
+    "suction_normal_inhg": [4.5, 5.5],
+    "suction_minimum_inhg": 3.5
+  },
+  "performance": {
+    "vne_kias": 223,
+    "vno_kias": 195,
+    "vs0_kias": 67,
+    "vs1_kias": 84,
+    "vfe_kias": 152,
+    "normal_approach_kias": [90, 110],
+    "normal_climb_fpm": [800, 1400]
+  },
+  "trim": {
+    "asymmetric_threshold_pct": 15
+  },
+  "icing": {
+    "has_anti_ice": false,
+    "has_pitot_heat": true,
+    "icing_oat_range_c": [-20, 2]
+  }
+}

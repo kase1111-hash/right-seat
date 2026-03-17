@@ -1,0 +1,65 @@
+{
+  "aircraft_id": "c172sp",
+  "display_name": "Cessna 172SP Skyhawk",
+  "engine_type": "piston",
+  "engine_count": 1,
+  "msfs_titles": [
+    "Cessna Skyhawk G1000 Asobo",
+    "Cessna 172 Skyhawk Asobo"
+  ],
+  "fuel": {
+    "tank_count": 2,
+    "tank_names": ["left", "right"],
+    "total_capacity_gal": 56,
+    "usable_capacity_gal": 53,
+    "selector_positions": ["OFF", "LEFT", "RIGHT", "BOTH"],
+    "normal_cruise_selector": "BOTH",
+    "imbalance_advisory_pct": 10,
+    "imbalance_warning_pct": 20,
+    "minimum_fuel_warning_gal": 8
+  },
+  "engine": {
+    "rpm_range": [600, 2700],
+    "rpm_cruise_typical": [2200, 2500],
+    "manifold_pressure_range_inhg": [12, 30],
+    "cht_normal_range_f": [200, 450],
+    "cht_redline_f": 500,
+    "cht_trend_advisory_f_per_min": 5,
+    "cht_trend_warning_f_per_min": 10,
+    "egt_normal_range_f": [1100, 1500],
+    "egt_redline_f": 1600,
+    "oil_pressure_normal_psi": [60, 90],
+    "oil_pressure_minimum_psi": 25,
+    "oil_pressure_redline_psi": 115,
+    "oil_pressure_drop_rate_warning_psi_per_min": 10,
+    "oil_temp_normal_range_f": [100, 245],
+    "oil_temp_redline_f": 250,
+    "fuel_flow_cruise_gph": [8, 12]
+  },
+  "electrical": {
+    "main_bus_normal_v": [13.5, 14.5],
+    "main_bus_minimum_v": 12.0,
+    "battery_bus_minimum_v": 11.0
+  },
+  "vacuum": {
+    "suction_normal_inhg": [4.5, 5.5],
+    "suction_minimum_inhg": 3.5
+  },
+  "performance": {
+    "vne_kias": 163,
+    "vno_kias": 129,
+    "vs0_kias": 40,
+    "vs1_kias": 48,
+    "vfe_kias": 110,
+    "normal_approach_kias": [65, 85],
+    "normal_climb_fpm": [500, 800]
+  },
+  "trim": {
+    "asymmetric_threshold_pct": 15
+  },
+  "icing": {
+    "has_anti_ice": false,
+    "has_pitot_heat": true,
+    "icing_oat_range_c": [-20, 2]
+  }
+}
