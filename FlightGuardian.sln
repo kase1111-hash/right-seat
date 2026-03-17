@@ -18,11 +18,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Guardian.App", "src\Guardia
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Guardian.Desktop", "src\Guardian.Desktop\Guardian.Desktop.csproj", "{A1B2C3D4-0007-0007-0007-000000000007}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Guardian.Replay", "src\Guardian.Replay\Guardian.Replay.csproj", "{A1B2C3D4-0008-0008-0008-000000000008}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Guardian.Core.Tests", "tests\Guardian.Core.Tests\Guardian.Core.Tests.csproj", "{A1B2C3D4-0011-0011-0011-000000000011}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Guardian.Detection.Tests", "tests\Guardian.Detection.Tests\Guardian.Detection.Tests.csproj", "{A1B2C3D4-0012-0012-0012-000000000012}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Guardian.Priority.Tests", "tests\Guardian.Priority.Tests\Guardian.Priority.Tests.csproj", "{A1B2C3D4-0013-0013-0013-000000000013}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Guardian.Replay.Tests", "tests\Guardian.Replay.Tests\Guardian.Replay.Tests.csproj", "{A1B2C3D4-0014-0014-0014-000000000014}"
 EndProject
 
 Global
@@ -71,5 +75,13 @@ Global
 		{A1B2C3D4-0013-0013-0013-000000000013}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1B2C3D4-0013-0013-0013-000000000013}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1B2C3D4-0013-0013-0013-000000000013}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1B2C3D4-0008-0008-0008-000000000008}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1B2C3D4-0008-0008-0008-000000000008}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1B2C3D4-0008-0008-0008-000000000008}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1B2C3D4-0008-0008-0008-000000000008}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1B2C3D4-0014-0014-0014-000000000014}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1B2C3D4-0014-0014-0014-000000000014}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1B2C3D4-0014-0014-0014-000000000014}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1B2C3D4-0014-0014-0014-000000000014}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

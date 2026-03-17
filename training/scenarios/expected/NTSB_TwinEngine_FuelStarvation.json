@@ -1,0 +1,28 @@
+{
+  "scenario_id": "NTSB_TwinEngine_FuelStarvation",
+  "description": "Twin-engine aircraft with both engines switched to the same (left) tank at T+10s. Right tank has usable fuel. Based on NTSB fuel starvation accident pattern where pilot failed to switch fuel selectors symmetrically after takeoff.",
+  "expected_alerts": [
+    {
+      "rule_id": "R001",
+      "severity": "Warning",
+      "text_key": "R001_BOTH_ENGINES_SAME_TANK",
+      "earliest_sec": 5,
+      "latest_sec": 30,
+      "required": true
+    }
+  ],
+  "forbidden_alerts": [
+    {
+      "rule_id": "R003"
+    },
+    {
+      "rule_id": "R004"
+    },
+    {
+      "rule_id": "R007"
+    },
+    {
+      "rule_id": "R008"
+    }
+  ]
+}
