@@ -45,7 +45,13 @@ public static class Program
         // Initialize detection engine
         var detectionEngine = new DetectionEngine(config.EnabledRules);
         detectionEngine.Register(new R001_FuelCrossFeedMismatch());
+        detectionEngine.Register(new R002_AsymmetricPowerTrim());
         detectionEngine.Register(new R003_EngineTemperatureTrend());
+        detectionEngine.Register(new R004_OilPressureAnomaly());
+        detectionEngine.Register(new R005_FuelImbalance());
+        detectionEngine.Register(new R006_IcingConditions());
+        detectionEngine.Register(new R007_ElectricalDegradation());
+        detectionEngine.Register(new R008_VacuumSystemFailure());
         detectionEngine.OnAlert += alert =>
         {
             Log.Warning("ALERT: {Alert}", alert);
