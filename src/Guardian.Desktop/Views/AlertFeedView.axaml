@@ -1,0 +1,76 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Guardian.Desktop.ViewModels"
+             x:Class="Guardian.Desktop.Views.AlertFeedView"
+             x:DataType="vm:AlertFeedViewModel">
+
+    <DockPanel>
+        <!-- Summary bar -->
+        <Border DockPanel.Dock="Top" Classes="panel" Margin="4,4,4,0">
+            <StackPanel Orientation="Horizontal" Spacing="16">
+                <TextBlock Classes="panel-header" Text="Alert Feed" VerticalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <Border Background="#4D0000" CornerRadius="3" Padding="6,2">
+                        <TextBlock Text="{Binding CriticalCount, StringFormat='C: {0}'}" Foreground="#FF4444" FontSize="11" FontWeight="Bold" />
+                    </Border>
+                    <Border Background="#4D3300" CornerRadius="3" Padding="6,2">
+                        <TextBlock Text="{Binding WarningCount, StringFormat='W: {0}'}" Foreground="#FFAA00" FontSize="11" FontWeight="Bold" />
+                    </Border>
+                    <Border Background="#003D4D" CornerRadius="3" Padding="6,2">
+                        <TextBlock Text="{Binding AdvisoryCount, StringFormat='A: {0}'}" Foreground="#00AADD" FontSize="11" FontWeight="Bold" />
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Alert list -->
+        <ListBox DockPanel.Dock="Top"
+                 ItemsSource="{Binding Alerts}"
+                 SelectedItem="{Binding SelectedAlert}"
+                 Background="Transparent"
+                 Margin="4">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:AlertEntryViewModel">
+                    <Border Margin="0,2" Padding="8,6" CornerRadius="4"
+                            Classes="{Binding SeverityClass}">
+                        <Grid ColumnDefinitions="70,50,*" RowDefinitions="Auto,Auto">
+                            <!-- Row 1: Time + Severity + Rule ID -->
+                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                       Text="{Binding TimestampDisplay}"
+                                       FontSize="11" Classes="mono" Opacity="0.7" />
+                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                       Text="{Binding SeverityDisplay}"
+                                       FontSize="11" FontWeight="Bold" />
+                            <TextBlock Grid.Row="0" Grid.Column="2"
+                                       Text="{Binding RuleId}"
+                                       FontSize="11" Opacity="0.7" HorizontalAlignment="Right" />
+
+                            <!-- Row 2: Alert text -->
+                            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                                       Text="{Binding FormattedText}"
+                                       TextWrapping="Wrap" FontSize="12" Margin="0,2,0,0" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- Detail panel when an alert is selected -->
+        <Border DockPanel.Dock="Bottom" Classes="panel" Margin="4"
+                IsVisible="{Binding SelectedAlert, Converter={x:Static ObjectConverters.IsNotNull}}">
+            <StackPanel DataContext="{Binding SelectedAlert}" x:DataType="vm:AlertEntryViewModel">
+                <TextBlock Classes="panel-header" Text="Alert Detail" />
+                <Grid ColumnDefinitions="100,*" RowDefinitions="Auto,Auto,Auto,Auto">
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Rule" />
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding RuleId}" FontWeight="SemiBold" />
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Phase" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding FlightPhase}" />
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Text Key" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding TextKey}" Classes="mono" FontSize="11" />
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Deferred" />
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding WasDeferredFromSterile}" />
+                </Grid>
+            </StackPanel>
+        </Border>
+    </DockPanel>
+</UserControl>

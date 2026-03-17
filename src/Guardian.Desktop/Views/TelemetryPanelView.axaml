@@ -1,0 +1,84 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Guardian.Desktop.ViewModels"
+             x:Class="Guardian.Desktop.Views.TelemetryPanelView"
+             x:DataType="vm:TelemetryPanelViewModel">
+
+    <ScrollViewer>
+        <StackPanel Spacing="4" Margin="4">
+
+            <!-- Flight Data -->
+            <Border Classes="panel">
+                <StackPanel>
+                    <TextBlock Classes="panel-header" Text="Flight Data" />
+                    <Grid ColumnDefinitions="100,*" RowDefinitions="Auto,Auto,Auto,Auto" >
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Altitude" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Altitude}" Classes="mono" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Airspeed" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Airspeed}" Classes="mono" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="V/S" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding VerticalSpeed}" Classes="mono" />
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="OAT" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Oat}" Classes="mono" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Engine 1 -->
+            <Border Classes="panel">
+                <StackPanel>
+                    <TextBlock Classes="panel-header" Text="Engine 1" />
+                    <Grid ColumnDefinitions="100,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="RPM" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Rpm1}" Classes="mono" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="MAP" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ManifoldPressure1}" Classes="mono" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="CHT" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Cht1}" Classes="mono" />
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="EGT" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Egt1}" Classes="mono" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Oil Temp" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding OilTemp1}" Classes="mono" />
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Oil Press" />
+                        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding OilPressure1}" Classes="mono" />
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Fuel Flow" />
+                        <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding FuelFlow1}" Classes="mono" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Fuel -->
+            <Border Classes="panel">
+                <StackPanel>
+                    <TextBlock Classes="panel-header" Text="Fuel" />
+                    <Grid ColumnDefinitions="100,*" RowDefinitions="Auto,Auto,Auto">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Left Tank" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding FuelLeft}" Classes="mono" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Right Tank" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding FuelRight}" Classes="mono" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Total" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding FuelTotal}" Classes="mono" FontWeight="SemiBold" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Systems -->
+            <Border Classes="panel">
+                <StackPanel>
+                    <TextBlock Classes="panel-header" Text="Systems" />
+                    <Grid ColumnDefinitions="100,*" RowDefinitions="Auto,Auto,Auto,Auto">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Main Bus" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding MainBusVoltage}" Classes="mono" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Vacuum" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SuctionPressure}" Classes="mono" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Struct Ice" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding StructuralIce}" Classes="mono" />
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Pitot Ice" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding PitotIce}" Classes="mono" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

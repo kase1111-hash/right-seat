@@ -1,0 +1,66 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Guardian.Desktop.ViewModels"
+        xmlns:views="using:Guardian.Desktop.Views"
+        x:Class="Guardian.Desktop.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="{Binding WindowTitle}"
+        Width="1400" Height="900"
+        MinWidth="1000" MinHeight="700"
+        WindowStartupLocation="CenterScreen">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <DockPanel>
+        <!-- Status bar -->
+        <Border DockPanel.Dock="Top" Background="#0F1020" Padding="8,4">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto,Auto">
+                <!-- Connection indicator -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                    <Ellipse Width="10" Height="10" Classes="{Binding ConnectionStateClass}" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding ConnectionState}" VerticalAlignment="Center" FontSize="12" />
+                </StackPanel>
+
+                <!-- Sterile cockpit indicator -->
+                <Border Grid.Column="2" IsVisible="{Binding IsSterileCockpit}"
+                        Background="#4D3300" CornerRadius="3" Padding="8,2" Margin="4,0">
+                    <TextBlock Text="STERILE" Foreground="#FFAA00" FontWeight="Bold" FontSize="11" />
+                </Border>
+
+                <!-- Recording indicator -->
+                <Border Grid.Column="3" IsVisible="{Binding IsRecording}"
+                        Background="#4D0000" CornerRadius="3" Padding="8,2" Margin="4,0">
+                    <TextBlock Text="REC" Foreground="#FF4444" FontWeight="Bold" FontSize="11" />
+                </Border>
+
+                <!-- Toolbar buttons -->
+                <Button Grid.Column="4" Content="Sterile" Command="{Binding ToggleSterileCockpitCommand}"
+                        Margin="4,0" Padding="8,2" FontSize="11" />
+                <Button Grid.Column="5" Content="{Binding IsRecording, Converter={x:Static BoolConverters.StringConverterTrue}, ConverterParameter='Stop Rec|Record'}"
+                        Command="{Binding ToggleRecordingCommand}"
+                        Margin="4,0" Padding="8,2" FontSize="11" />
+                <Button Grid.Column="6" Content="Silence" Command="{Binding SilenceCriticalAlarmCommand}"
+                        Margin="4,0" Padding="8,2" FontSize="11" />
+            </Grid>
+        </Border>
+
+        <!-- Main content: 3-column layout -->
+        <Grid ColumnDefinitions="350,*,300">
+
+            <!-- Left: Telemetry Panel -->
+            <views:TelemetryPanelView Grid.Column="0" DataContext="{Binding Telemetry}" />
+
+            <!-- Center: Alert Feed -->
+            <views:AlertFeedView Grid.Column="1" DataContext="{Binding AlertFeed}" />
+
+            <!-- Right: Diagnostics -->
+            <Grid Grid.Column="2" RowDefinitions="*,*">
+                <views:RuleStatusView Grid.Row="0" DataContext="{Binding RuleStatus}" />
+                <views:StateModelView Grid.Row="1" DataContext="{Binding StateModel}" />
+            </Grid>
+
+        </Grid>
+    </DockPanel>
+</Window>
