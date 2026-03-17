@@ -1,0 +1,44 @@
+[connection]
+simconnect_retry_interval_sec = 5
+simconnect_max_retries = 0  # 0 = infinite
+
+[polling]
+group_a_interval_ms = 250
+group_b_interval_ms = 1000
+group_c_interval_ms = 4000
+
+[buffer]
+history_depth_sec = 600  # 10 minutes
+trend_window_sec = 60
+rate_of_change_window_sec = 30
+
+[detection]
+enabled_rules = ["R001", "R002", "R003", "R004", "R005", "R006", "R007", "R008"]
+sensitivity = "standard"  # conservative, standard, sensitive
+
+[sterile_cockpit]
+enabled = true
+phases = ["TAKEOFF", "APPROACH", "LANDING"]
+manual_toggle_key = "Ctrl+Shift+S"
+
+[alerts]
+audio_enabled = true
+tts_enabled = false
+tts_voice = "default"
+critical_repeat_interval_sec = 30
+warning_cooldown_sec = 60
+advisory_cooldown_sec = 180
+
+[recording]
+auto_record = false
+output_directory = "./recordings"
+format = "csv"  # csv or parquet
+
+[efb]
+communication_mode = "http"  # http, lvar, or coherent
+http_port = 9847
+
+[ui]
+theme = "dark"
+show_sparklines = true
+telemetry_panel_visible = true

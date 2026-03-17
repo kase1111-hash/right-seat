@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Guardian.App</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Guardian.Core\Guardian.Core.csproj" />
+    <ProjectReference Include="..\Guardian.Common\Guardian.Common.csproj" />
+    <ProjectReference Include="..\Guardian.SimConnect\Guardian.SimConnect.csproj" />
+    <ProjectReference Include="..\Guardian.Detection\Guardian.Detection.csproj" />
+    <ProjectReference Include="..\Guardian.Priority\Guardian.Priority.csproj" />
+  </ItemGroup>
+</Project>
