@@ -2,6 +2,7 @@ using Guardian.Common;
 using Guardian.Core;
 using Guardian.Detection;
 using Guardian.Detection.Rules;
+using Guardian.Priority;
 using Guardian.SimConnect;
 using Serilog;
 using Serilog.Events;
@@ -45,10 +46,29 @@ public static class Program
         // Initialize detection engine
         var detectionEngine = new DetectionEngine(config.EnabledRules);
         detectionEngine.Register(new R001_FuelCrossFeedMismatch());
+        detectionEngine.Register(new R002_AsymmetricPowerTrim());
         detectionEngine.Register(new R003_EngineTemperatureTrend());
+        detectionEngine.Register(new R004_OilPressureAnomaly());
+        detectionEngine.Register(new R005_FuelImbalance());
+        detectionEngine.Register(new R006_IcingConditions());
+        detectionEngine.Register(new R007_ElectricalDegradation());
+        detectionEngine.Register(new R008_VacuumSystemFailure());
+        // Initialize alert pipeline
+        var alertPipeline = new AlertPipeline(config);
+        alertPipeline.OnAlertDelivered += delivered =>
+        {
+            Log.Warning("DELIVERED: {Alert} (deferred={Deferred})",
+                delivered.Alert, delivered.WasDeferredFromSterile);
+        };
+        alertPipeline.OnInfoLogged += info =>
+        {
+            Log.Information("INFO: {Alert}", info);
+        };
+
+        // Wire detection engine to alert pipeline
         detectionEngine.OnAlert += alert =>
         {
-            Log.Warning("ALERT: {Alert}", alert);
+            alertPipeline.IngestAlert(alert, DateTime.UtcNow);
         };
         detectionEngine.OnRuleStateChanged += (ruleId, state) =>
         {
@@ -88,6 +108,9 @@ public static class Program
             {
                 detectionEngine.Evaluate(snapshot, buffer, activeProfile, phaseTracker.CurrentPhase);
             }
+
+            // Tick alert pipeline (sterile cockpit transitions + timed delivery)
+            alertPipeline.Tick(snapshot.Timestamp, phaseTracker.CurrentPhase);
 
             Log.Verbose("Snapshot recorded: {Count} values at {Time}", snapshot.Keys.Count, snapshot.Timestamp);
         };

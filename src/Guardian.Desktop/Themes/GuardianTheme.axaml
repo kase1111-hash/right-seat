@@ -1,0 +1,88 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Flight Guardian dark theme overrides -->
+
+    <Style Selector="Window">
+        <Setter Property="Background" Value="#1A1A2E" />
+        <Setter Property="Foreground" Value="#E0E0E0" />
+        <Setter Property="FontFamily" Value="Inter, Segoe UI, sans-serif" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <!-- Panel cards -->
+    <Style Selector="Border.panel">
+        <Setter Property="Background" Value="#16213E" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="12" />
+        <Setter Property="Margin" Value="4" />
+        <Setter Property="BorderBrush" Value="#2A2A4A" />
+        <Setter Property="BorderThickness" Value="1" />
+    </Style>
+
+    <!-- Panel headers -->
+    <Style Selector="TextBlock.panel-header">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="#A0C4FF" />
+        <Setter Property="Margin" Value="0,0,0,8" />
+    </Style>
+
+    <!-- Severity colors -->
+    <Style Selector="Border.severity-critical">
+        <Setter Property="Background" Value="#4D0000" />
+        <Setter Property="BorderBrush" Value="#FF4444" />
+        <Setter Property="BorderThickness" Value="2" />
+    </Style>
+
+    <Style Selector="Border.severity-warning">
+        <Setter Property="Background" Value="#4D3300" />
+        <Setter Property="BorderBrush" Value="#FFAA00" />
+        <Setter Property="BorderThickness" Value="1" />
+    </Style>
+
+    <Style Selector="Border.severity-advisory">
+        <Setter Property="Background" Value="#003D4D" />
+        <Setter Property="BorderBrush" Value="#00AADD" />
+        <Setter Property="BorderThickness" Value="1" />
+    </Style>
+
+    <Style Selector="Border.severity-info">
+        <Setter Property="Background" Value="#1A2A1A" />
+        <Setter Property="BorderBrush" Value="#66AA66" />
+        <Setter Property="BorderThickness" Value="1" />
+    </Style>
+
+    <!-- Telemetry value states -->
+    <Style Selector="TextBlock.value-normal">
+        <Setter Property="Foreground" Value="#88CC88" />
+    </Style>
+
+    <Style Selector="TextBlock.value-caution">
+        <Setter Property="Foreground" Value="#FFAA00" />
+    </Style>
+
+    <Style Selector="TextBlock.value-danger">
+        <Setter Property="Foreground" Value="#FF4444" />
+        <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+
+    <!-- Connection status indicators -->
+    <Style Selector="Ellipse.status-connected">
+        <Setter Property="Fill" Value="#44CC44" />
+    </Style>
+
+    <Style Selector="Ellipse.status-disconnected">
+        <Setter Property="Fill" Value="#CC4444" />
+    </Style>
+
+    <Style Selector="Ellipse.status-connecting">
+        <Setter Property="Fill" Value="#CCAA44" />
+    </Style>
+
+    <!-- Monospace for telemetry values -->
+    <Style Selector="TextBlock.mono">
+        <Setter Property="FontFamily" Value="Cascadia Mono, Consolas, monospace" />
+    </Style>
+
+</Styles>
