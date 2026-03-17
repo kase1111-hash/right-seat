@@ -1,4 +1,7 @@
 using Guardian.Common;
+using Guardian.Core;
+using Guardian.Detection;
+using Guardian.Detection.Rules;
 using Guardian.SimConnect;
 using Serilog;
 using Serilog.Events;
@@ -32,6 +35,29 @@ public static class Program
         // Initialize telemetry buffer
         var buffer = new TelemetryBuffer(TimeSpan.FromSeconds(config.HistoryDepthSec));
 
+        // Initialize flight phase tracker
+        var phaseTracker = new FlightPhaseTracker();
+        phaseTracker.OnPhaseChanged += (old, @new) =>
+        {
+            Log.Information("Flight phase: {Old} → {New}", old, @new);
+        };
+
+        // Initialize detection engine
+        var detectionEngine = new DetectionEngine(config.EnabledRules);
+        detectionEngine.Register(new R001_FuelCrossFeedMismatch());
+        detectionEngine.Register(new R003_EngineTemperatureTrend());
+        detectionEngine.OnAlert += alert =>
+        {
+            Log.Warning("ALERT: {Alert}", alert);
+        };
+        detectionEngine.OnRuleStateChanged += (ruleId, state) =>
+        {
+            Log.Warning("Rule {RuleId} state changed: {State}", ruleId, state);
+        };
+
+        // Use generic profile until aircraft is identified
+        AircraftProfile? activeProfile = null;
+
         // Initialize SimConnect client
         using var simConnect = new SimConnectClient(
             retryIntervalMs: config.SimConnectRetryIntervalSec * 1000,
@@ -43,8 +69,27 @@ public static class Program
         simConnect.OnSnapshot += snapshot =>
         {
             buffer.Record(snapshot);
-            Log.Verbose("Snapshot recorded: {Count} values at {Time}",
-                snapshot.Keys.Count, snapshot.Timestamp);
+
+            // Update flight phase
+            phaseTracker.Update(snapshot, buffer);
+
+            // Match profile on first snapshot if not yet matched
+            if (activeProfile is null)
+            {
+                var engineCount = (int)(snapshot.Get(SimVarId.NumberOfEngines) ?? 1);
+                var engineType = ((int)(snapshot.Get(SimVarId.EngineType) ?? 0)) == 0 ? "piston" : "turboprop";
+                activeProfile = profileLoader.MatchProfile("", engineCount, engineType);
+                if (activeProfile is not null)
+                    Log.Information("Active profile: {Id} ({Name})", activeProfile.AircraftId, activeProfile.DisplayName);
+            }
+
+            // Evaluate detection rules
+            if (activeProfile is not null)
+            {
+                detectionEngine.Evaluate(snapshot, buffer, activeProfile, phaseTracker.CurrentPhase);
+            }
+
+            Log.Verbose("Snapshot recorded: {Count} values at {Time}", snapshot.Keys.Count, snapshot.Timestamp);
         };
 
         simConnect.OnStateChanged += state =>

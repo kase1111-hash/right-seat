@@ -18,5 +18,6 @@
     <ProjectReference Include="..\..\src\Guardian.Core\Guardian.Core.csproj" />
     <ProjectReference Include="..\..\src\Guardian.Detection\Guardian.Detection.csproj" />
     <ProjectReference Include="..\..\src\Guardian.Common\Guardian.Common.csproj" />
+    <ProjectReference Include="..\..\src\Guardian.SimConnect\Guardian.SimConnect.csproj" />
   </ItemGroup>
 </Project>
