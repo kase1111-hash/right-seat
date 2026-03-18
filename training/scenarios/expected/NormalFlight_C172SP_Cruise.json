@@ -1,0 +1,15 @@
+{
+  "description": "Normal C172SP cruise flight — all parameters within limits. No alerts should fire.",
+  "profile": "c172sp",
+  "expected_alerts": [],
+  "forbidden_alerts": [
+    { "rule_id": "R001" },
+    { "rule_id": "R002" },
+    { "rule_id": "R003" },
+    { "rule_id": "R004" },
+    { "rule_id": "R005" },
+    { "rule_id": "R006" },
+    { "rule_id": "R007" },
+    { "rule_id": "R008" }
+  ]
+}

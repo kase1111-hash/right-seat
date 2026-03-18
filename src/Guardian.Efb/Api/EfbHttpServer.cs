@@ -120,7 +120,15 @@ public sealed class EfbHttpServer : IDisposable
 
                 case "/api/settings" when request.HttpMethod == "POST":
                     var body = await ReadBody(request);
-                    var settings = JsonSerializer.Deserialize<SettingsUpdateDto>(body);
+                    SettingsUpdateDto? settings = null;
+                    try
+                    {
+                        settings = JsonSerializer.Deserialize<SettingsUpdateDto>(body);
+                    }
+                    catch (JsonException)
+                    {
+                        // Fall through to null check below
+                    }
                     if (settings is not null)
                     {
                         _state.ApplySettings(settings);

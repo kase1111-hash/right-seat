@@ -1,0 +1,121 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Guardian.Desktop.ViewModels"
+             x:Class="Guardian.Desktop.Views.ReplayViewerView"
+             x:DataType="vm:ReplayViewerViewModel">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="16">
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,12">
+            <TextBlock Text="Scenario Replay Viewer" FontSize="20" FontWeight="Bold"/>
+            <StackPanel Orientation="Horizontal" Spacing="16" Margin="0,4,0,0">
+                <TextBlock Text="{Binding ScenarioName}" FontSize="16" Foreground="#8B949E"/>
+                <TextBlock Text="{Binding ProfileName}" FontSize="14" Foreground="#484F58"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Timeline Bar -->
+        <Border Grid.Row="1"
+                Background="#1C2333" CornerRadius="6"
+                Padding="12" Margin="0,0,0,12">
+            <Grid RowDefinitions="Auto,Auto">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="{Binding PlaybackTime}" FontFamily="Consolas" FontSize="14"/>
+                    <TextBlock Text="/" Foreground="#484F58"/>
+                    <TextBlock Text="{Binding TotalTime}" FontFamily="Consolas" FontSize="14" Foreground="#8B949E"/>
+                </StackPanel>
+
+                <Border Grid.Row="1" Height="24" Background="#0D1117" CornerRadius="4" Margin="0,8,0,0">
+                    <ItemsControl ItemsSource="{Binding TimelineEntries}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Split View: Alerts vs Expected -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,*" Margin="0,0,0,12">
+            <!-- Delivered Alerts -->
+            <Border Background="#161B22" CornerRadius="6" Padding="12" Margin="0,0,6,0">
+                <Grid RowDefinitions="Auto,*">
+                    <TextBlock Text="Delivered Alerts" FontWeight="Bold" FontSize="16" Margin="0,0,0,8"/>
+                    <ScrollViewer Grid.Row="1">
+                        <ItemsControl ItemsSource="{Binding DeliveredAlerts}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#1C2333" CornerRadius="4" Padding="8" Margin="0,0,0,4">
+                                        <StackPanel Spacing="2">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <TextBlock Text="{Binding Time}" FontFamily="Consolas" FontSize="12" Foreground="#8B949E"/>
+                                                <TextBlock Text="{Binding Severity}" FontWeight="Bold" FontSize="12"/>
+                                                <TextBlock Text="{Binding RuleId}" FontSize="12" Foreground="#00AADD"/>
+                                            </StackPanel>
+                                            <TextBlock Text="{Binding Text}" FontSize="13" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <!-- Expected Results -->
+            <Border Grid.Column="1" Background="#161B22" CornerRadius="6" Padding="12" Margin="6,0,0,0">
+                <Grid RowDefinitions="Auto,*">
+                    <TextBlock Text="Expected Results" FontWeight="Bold" FontSize="16" Margin="0,0,0,8"/>
+                    <ScrollViewer Grid.Row="1">
+                        <ItemsControl ItemsSource="{Binding ExpectedAlerts}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#1C2333" CornerRadius="4" Padding="8" Margin="0,0,0,4">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <TextBlock Text="{Binding RuleId}" FontWeight="Bold" FontSize="13"/>
+                                            <TextBlock Text="{Binding Severity}" FontSize="12" Foreground="#8B949E"/>
+                                            <TextBlock Text="{Binding TimeWindow}" FontFamily="Consolas" FontSize="12"/>
+                                            <TextBlock FontSize="12" FontWeight="Bold">
+                                                <TextBlock.Text>
+                                                    <Binding Path="Matched" StringFormat="{}{0}">
+                                                        <Binding.FallbackValue>?</Binding.FallbackValue>
+                                                    </Binding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Validation Summary Footer -->
+        <Border Grid.Row="3" Background="#1C2333" CornerRadius="6" Padding="12">
+            <StackPanel Orientation="Horizontal" Spacing="24">
+                <TextBlock Text="{Binding ValidationSummary}" FontSize="14" FontWeight="Bold"/>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <TextBlock Text="Matched:" Foreground="#8B949E" FontSize="13"/>
+                    <TextBlock Text="{Binding MatchedCount}" Foreground="#44CC44" FontSize="13" FontWeight="Bold"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <TextBlock Text="Missing:" Foreground="#8B949E" FontSize="13"/>
+                    <TextBlock Text="{Binding MissingCount}" Foreground="#FF4444" FontSize="13" FontWeight="Bold"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <TextBlock Text="Unexpected:" Foreground="#8B949E" FontSize="13"/>
+                    <TextBlock Text="{Binding UnexpectedCount}" Foreground="#FFAA00" FontSize="13" FontWeight="Bold"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <TextBlock Text="Forbidden:" Foreground="#8B949E" FontSize="13"/>
+                    <TextBlock Text="{Binding ForbiddenCount}" Foreground="#FF4444" FontSize="13" FontWeight="Bold"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

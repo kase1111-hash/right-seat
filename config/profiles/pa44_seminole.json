@@ -1,0 +1,66 @@
+{
+  "aircraft_id": "pa44_seminole",
+  "display_name": "Piper PA-44-180 Seminole",
+  "engine_type": "piston",
+  "engine_count": 2,
+  "msfs_titles": [
+    "Piper PA-44 Seminole Asobo",
+    "Piper Seminole Asobo",
+    "JustFlight PA44 Seminole"
+  ],
+  "fuel": {
+    "tank_count": 2,
+    "tank_names": ["left", "right"],
+    "total_capacity_gal": 110,
+    "usable_capacity_gal": 108,
+    "selector_positions": ["OFF", "ON", "CROSSFEED"],
+    "normal_cruise_selector": "ON",
+    "imbalance_advisory_pct": 8,
+    "imbalance_warning_pct": 15,
+    "minimum_fuel_warning_gal": 10
+  },
+  "engine": {
+    "rpm_range": [600, 2700],
+    "rpm_cruise_typical": [2300, 2500],
+    "manifold_pressure_range_inhg": [15, 30],
+    "cht_normal_range_f": [200, 430],
+    "cht_redline_f": 475,
+    "cht_trend_advisory_f_per_min": 5,
+    "cht_trend_warning_f_per_min": 10,
+    "egt_normal_range_f": [1100, 1500],
+    "egt_redline_f": 1650,
+    "oil_pressure_normal_psi": [25, 95],
+    "oil_pressure_minimum_psi": 25,
+    "oil_pressure_redline_psi": 100,
+    "oil_pressure_drop_rate_warning_psi_per_min": 10,
+    "oil_temp_normal_range_f": [100, 240],
+    "oil_temp_redline_f": 245,
+    "fuel_flow_cruise_gph": [7, 10]
+  },
+  "electrical": {
+    "main_bus_normal_v": [13.5, 14.5],
+    "main_bus_minimum_v": 12.0,
+    "battery_bus_minimum_v": 11.0
+  },
+  "vacuum": {
+    "suction_normal_inhg": [4.5, 5.5],
+    "suction_minimum_inhg": 3.5
+  },
+  "performance": {
+    "vne_kias": 202,
+    "vno_kias": 169,
+    "vs0_kias": 55,
+    "vs1_kias": 65,
+    "vfe_kias": 111,
+    "normal_approach_kias": [80, 100],
+    "normal_climb_fpm": [700, 1200]
+  },
+  "trim": {
+    "asymmetric_threshold_pct": 12
+  },
+  "icing": {
+    "has_anti_ice": false,
+    "has_pitot_heat": true,
+    "icing_oat_range_c": [-20, 2]
+  }
+}
