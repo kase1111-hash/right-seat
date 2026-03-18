@@ -24,6 +24,9 @@ public sealed class EfbStateProvider
     private readonly object _lock = new();
     private readonly DateTime _startTime = DateTime.UtcNow;
 
+    private static readonly HashSet<string> ValidSensitivities = new(StringComparer.OrdinalIgnoreCase)
+        { "conservative", "standard", "sensitive" };
+
     private bool _connected;
     private int _criticalCount;
     private int _warningCount;
@@ -138,8 +141,15 @@ public sealed class EfbStateProvider
 
         if (settings.Sensitivity is not null)
         {
-            _config.Sensitivity = settings.Sensitivity;
-            Log.Information("EFB: Sensitivity set to {Value}", settings.Sensitivity);
+            if (ValidSensitivities.Contains(settings.Sensitivity))
+            {
+                _config.Sensitivity = settings.Sensitivity;
+                Log.Information("EFB: Sensitivity set to {Value}", settings.Sensitivity);
+            }
+            else
+            {
+                Log.Warning("EFB: Rejected invalid sensitivity value: {Value}", settings.Sensitivity);
+            }
         }
     }
 

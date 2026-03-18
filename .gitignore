@@ -49,3 +49,10 @@ Thumbs.db
 ## Node (EFB)
 efb/GuardianApp/node_modules/
 efb/GuardianApp/dist/
+
+## Secrets & Credentials
+.env*
+*.key
+*.pem
+*.pfx
+secrets/

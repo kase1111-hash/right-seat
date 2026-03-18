@@ -11,6 +11,16 @@ const POLL_INTERVAL_MS = 2000;
 let alertHistory = [];
 let currentScreen = 'dashboard';
 
+function escapeHtml(str) {
+    if (typeof str !== 'string') return str;
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 // ── Screen Navigation ──
 
 function showScreen(screen) {
@@ -113,7 +123,7 @@ function renderRules(rules) {
             : 'disabled';
         return `<div class="rule-chip">
             <span class="rule-dot ${dotClass}"></span>
-            <span>${r.rule_id}</span>
+            <span>${escapeHtml(r.rule_id)}</span>
         </div>`;
     }).join('');
 }
@@ -126,12 +136,12 @@ function renderAlertHistory() {
     countBadge.textContent = `${alertHistory.length} alerts`;
 
     list.innerHTML = alertHistory.map((alert, i) => {
-        const sevClass = `severity-${alert.severity.toLowerCase()}`;
+        const sevClass = `severity-${escapeHtml((alert.severity || '').toLowerCase())}`;
         const sevColor = getSeverityColor(alert.severity);
         return `<div class="alert-item ${sevClass}" onclick="showAlertDetail(${i})">
-            <span class="alert-item-time">${formatTime(alert.timestamp)}</span>
-            <span class="alert-item-severity" style="color:${sevColor}">${alert.severity.toUpperCase()}</span>
-            <span class="alert-item-text">${alert.text || alert.text_key}</span>
+            <span class="alert-item-time">${escapeHtml(formatTime(alert.timestamp))}</span>
+            <span class="alert-item-severity" style="color:${sevColor}">${escapeHtml((alert.severity || '').toUpperCase())}</span>
+            <span class="alert-item-text">${escapeHtml(alert.text || alert.text_key)}</span>
         </div>`;
     }).join('');
 }
@@ -148,9 +158,12 @@ function showAlertDetail(index) {
 
     const telDiv = document.getElementById('detail-telemetry');
     if (alert.telemetry && Object.keys(alert.telemetry).length > 0) {
-        telDiv.innerHTML = Object.entries(alert.telemetry)
-            .map(([k, v]) => `<div>${k}: ${typeof v === 'number' ? v.toFixed(2) : v}</div>`)
-            .join('');
+        telDiv.textContent = '';
+        Object.entries(alert.telemetry).forEach(([k, v]) => {
+            const div = document.createElement('div');
+            div.textContent = `${k}: ${typeof v === 'number' ? v.toFixed(2) : v}`;
+            telDiv.appendChild(div);
+        });
     } else {
         telDiv.innerHTML = '<div style="color:var(--text-muted)">No telemetry data</div>';
     }

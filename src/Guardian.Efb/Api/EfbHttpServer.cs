@@ -33,12 +33,25 @@ public sealed class EfbHttpServer : IDisposable
 
     // State providers (set by the host application)
     private readonly EfbStateProvider _state;
+    private readonly string _allowedOrigin;
+
+    // Rate limiting
+    private readonly SemaphoreSlim _concurrencyLimiter = new(10);
+    private int _requestsThisSecond;
+    private DateTime _rateLimitWindowStart = DateTime.UtcNow;
+    private const int MaxRequestsPerSecond = 60;
+    private const long MaxRequestBodyBytes = 4096;
 
     public EfbHttpServer(GuardianConfig config, EfbStateProvider stateProvider)
     {
         _port = config.HttpPort;
         _state = stateProvider;
+        _allowedOrigin = $"http://localhost:{_port}";
         _listener = new HttpListener();
+        // Security note: HTTP-only is intentional — the EFB server binds exclusively
+        // to localhost/127.0.0.1 and is not reachable from the network. If network
+        // exposure is ever required, add HTTPS via HttpListener certificate binding
+        // or migrate to Kestrel with TLS.
         _listener.Prefixes.Add($"http://localhost:{_port}/");
         _listener.Prefixes.Add($"http://127.0.0.1:{_port}/");
     }
@@ -89,7 +102,7 @@ public sealed class EfbHttpServer : IDisposable
         var response = context.Response;
 
         // CORS headers for EFB sandbox
-        response.AddHeader("Access-Control-Allow-Origin", "*");
+        response.AddHeader("Access-Control-Allow-Origin", _allowedOrigin);
         response.AddHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
         response.AddHeader("Access-Control-Allow-Headers", "Content-Type");
 
@@ -100,8 +113,28 @@ public sealed class EfbHttpServer : IDisposable
             return;
         }
 
+        // Rate limiting
+        if (!_concurrencyLimiter.Wait(TimeSpan.FromMilliseconds(500)))
+        {
+            response.StatusCode = 503;
+            await RespondJson(response, new { error = "Server busy" });
+            return;
+        }
+
         try
         {
+            var now = DateTime.UtcNow;
+            if ((now - _rateLimitWindowStart).TotalSeconds >= 1)
+            {
+                Interlocked.Exchange(ref _requestsThisSecond, 0);
+                _rateLimitWindowStart = now;
+            }
+            if (Interlocked.Increment(ref _requestsThisSecond) > MaxRequestsPerSecond)
+            {
+                response.StatusCode = 429;
+                await RespondJson(response, new { error = "Rate limit exceeded" });
+                return;
+            }
             var path = request.Url?.AbsolutePath ?? "/";
 
             switch (path)
@@ -119,6 +152,12 @@ public sealed class EfbHttpServer : IDisposable
                     break;
 
                 case "/api/settings" when request.HttpMethod == "POST":
+                    if (request.ContentLength64 > MaxRequestBodyBytes)
+                    {
+                        response.StatusCode = 413;
+                        await RespondJson(response, new { error = "Request body too large" });
+                        break;
+                    }
                     var body = await ReadBody(request);
                     SettingsUpdateDto? settings = null;
                     try
@@ -158,6 +197,10 @@ public sealed class EfbHttpServer : IDisposable
             Log.Error(ex, "Error handling request {Method} {Path}", request.HttpMethod, request.Url?.AbsolutePath);
             response.StatusCode = 500;
             await RespondJson(response, new { error = "Internal server error" });
+        }
+        finally
+        {
+            _concurrencyLimiter.Release();
         }
     }
 
