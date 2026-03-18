@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Guardian</title>
+    <link rel="stylesheet" href="css/guardian.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="nav">
+        <div class="nav-brand">Flight Guardian</div>
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-screen="dashboard" onclick="showScreen('dashboard')">Dashboard</button>
+            <button class="nav-tab" data-screen="history" onclick="showScreen('history')">History</button>
+            <button class="nav-tab" data-screen="settings" onclick="showScreen('settings')">Settings</button>
+        </div>
+        <div class="nav-status">
+            <span id="connection-dot" class="status-dot disconnected"></span>
+            <span id="connection-text">Disconnected</span>
+        </div>
+    </nav>
+
+    <!-- Dashboard Screen -->
+    <div id="screen-dashboard" class="screen active">
+        <!-- Flight Phase -->
+        <div class="phase-bar">
+            <span class="phase-label">Phase:</span>
+            <span id="flight-phase" class="phase-value">Ground</span>
+            <span id="sterile-badge" class="badge badge-sterile" style="display:none">STERILE</span>
+        </div>
+
+        <!-- Alert Counts -->
+        <div class="alert-counts">
+            <div class="count-card count-critical">
+                <div class="count-number" id="count-critical">0</div>
+                <div class="count-label">Critical</div>
+            </div>
+            <div class="count-card count-warning">
+                <div class="count-number" id="count-warning">0</div>
+                <div class="count-label">Warning</div>
+            </div>
+            <div class="count-card count-advisory">
+                <div class="count-number" id="count-advisory">0</div>
+                <div class="count-label">Advisory</div>
+            </div>
+        </div>
+
+        <!-- Most Recent Alert Banner -->
+        <div id="latest-alert" class="alert-banner" style="display:none">
+            <div class="alert-banner-severity" id="latest-severity">---</div>
+            <div class="alert-banner-content">
+                <div class="alert-banner-rule" id="latest-rule">---</div>
+                <div class="alert-banner-text" id="latest-text">No active alerts</div>
+                <div class="alert-banner-time" id="latest-time">---</div>
+            </div>
+        </div>
+
+        <!-- Aircraft Info -->
+        <div class="info-panel">
+            <div class="info-row">
+                <span class="info-label">Aircraft:</span>
+                <span id="aircraft-name" class="info-value">---</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Uptime:</span>
+                <span id="uptime" class="info-value">---</span>
+            </div>
+        </div>
+
+        <!-- Rule Status Summary -->
+        <div class="rules-summary" id="rules-summary"></div>
+    </div>
+
+    <!-- Alert History Screen -->
+    <div id="screen-history" class="screen">
+        <div class="history-header">
+            <h2>Alert History</h2>
+            <span id="history-count" class="badge">0 alerts</span>
+        </div>
+        <div id="alert-list" class="alert-list"></div>
+
+        <!-- Alert Detail Modal -->
+        <div id="alert-detail" class="alert-detail" style="display:none">
+            <button class="detail-close" onclick="closeDetail()">&times;</button>
+            <h3 id="detail-rule">---</h3>
+            <div class="detail-grid">
+                <div class="detail-row">
+                    <span class="detail-label">Severity:</span>
+                    <span id="detail-severity">---</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Time:</span>
+                    <span id="detail-time">---</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Phase:</span>
+                    <span id="detail-phase">---</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Text Key:</span>
+                    <span id="detail-textkey" class="mono">---</span>
+                </div>
+            </div>
+            <h4>Telemetry Snapshot</h4>
+            <div id="detail-telemetry" class="detail-telemetry"></div>
+        </div>
+    </div>
+
+    <!-- Settings Screen -->
+    <div id="screen-settings" class="screen">
+        <h2>Settings</h2>
+
+        <div class="setting-group">
+            <div class="setting-row">
+                <div class="setting-info">
+                    <div class="setting-label">Sterile Cockpit (Manual)</div>
+                    <div class="setting-desc">Override automatic sterile cockpit mode</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="setting-sterile" onchange="updateSetting('sterile')">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-info">
+                    <div class="setting-label">Audio Alerts</div>
+                    <div class="setting-desc">Enable audio tones for warnings and critical alerts</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="setting-audio" checked onchange="updateSetting('audio')">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-info">
+                    <div class="setting-label">Sensitivity</div>
+                    <div class="setting-desc">Detection sensitivity preset</div>
+                </div>
+                <select id="setting-sensitivity" onchange="updateSetting('sensitivity')">
+                    <option value="conservative">Conservative</option>
+                    <option value="standard" selected>Standard</option>
+                    <option value="sensitive">Sensitive</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="setting-group">
+            <button class="btn btn-danger" onclick="silenceAlarm()">Silence Critical Alarm</button>
+        </div>
+    </div>
+
+    <script src="js/guardian.js"></script>
+</body>
+</html>

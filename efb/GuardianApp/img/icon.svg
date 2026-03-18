@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <circle cx="32" cy="32" r="30" fill="#0D1117" stroke="#00AADD" stroke-width="2"/>
+  <path d="M32 12 L42 28 L52 44 H12 L22 28 Z" fill="#00AADD" opacity="0.3"/>
+  <path d="M32 18 L38 30 L44 42 H20 L26 30 Z" fill="#00AADD" opacity="0.6"/>
+  <circle cx="32" cy="34" r="4" fill="#00AADD"/>
+  <text x="32" y="56" text-anchor="middle" fill="#E6EDF3" font-size="8" font-family="sans-serif" font-weight="bold">GUARDIAN</text>
+</svg>

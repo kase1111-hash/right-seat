@@ -2,6 +2,7 @@ using Guardian.Common;
 using Guardian.Core;
 using Guardian.Detection;
 using Guardian.Detection.Rules;
+using Guardian.Efb.Api;
 using Guardian.Priority;
 using Guardian.SimConnect;
 using Serilog;
@@ -23,6 +24,8 @@ public sealed class GuardianEngineService : IDisposable
     private readonly AlertPipeline _pipeline;
     private readonly ProfileLoader _profileLoader;
     private SimConnectClient? _simConnect;
+    private EfbHttpServer? _efbServer;
+    private EfbStateProvider? _efbState;
 
     private AircraftProfile? _activeProfile;
     private bool _isRecording;
@@ -110,15 +113,38 @@ public sealed class GuardianEngineService : IDisposable
         _simConnect.OnStateChanged += state =>
         {
             OnConnectionStateChanged?.Invoke(state);
+            _efbState?.SetConnected(state == "Connected");
         };
 
         _simConnect.Start();
+
+        // Start EFB HTTP server
+        _efbState = new EfbStateProvider(
+            _config,
+            _pipeline,
+            () => _detection.GetRuleStates(),
+            () => _phaseTracker.CurrentPhase,
+            () => _activeProfile);
+
+        _efbServer = new EfbHttpServer(_config, _efbState);
+        try
+        {
+            _efbServer.Start();
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Failed to start EFB HTTP server — EFB features disabled");
+            _efbServer = null;
+        }
+
         Log.Information("Guardian engine started");
     }
 
     public void Stop()
     {
         StopRecording();
+        _efbServer?.Dispose();
+        _efbServer = null;
         _simConnect?.Dispose();
         _simConnect = null;
         Log.Information("Guardian engine stopped");
