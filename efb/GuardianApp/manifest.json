@@ -1,0 +1,12 @@
+{
+  "id": "guardian-efb",
+  "name": "Flight Guardian",
+  "version": "0.1.0",
+  "description": "Real-time flight safety monitoring for MSFS 2024",
+  "author": "Flight Guardian Project",
+  "entry_point": "index.html",
+  "icon": "img/icon.svg",
+  "min_width": 400,
+  "min_height": 600,
+  "category": "safety"
+}

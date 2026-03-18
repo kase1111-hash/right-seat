@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Guardian.Efb</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Serilog" Version="3.1.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Guardian.Core\Guardian.Core.csproj" />
+    <ProjectReference Include="..\Guardian.Common\Guardian.Common.csproj" />
+    <ProjectReference Include="..\Guardian.Priority\Guardian.Priority.csproj" />
+    <ProjectReference Include="..\Guardian.Detection\Guardian.Detection.csproj" />
+  </ItemGroup>
+</Project>
