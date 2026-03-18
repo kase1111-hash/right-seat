@@ -88,31 +88,38 @@ public static class Program
 
         simConnect.OnSnapshot += snapshot =>
         {
-            buffer.Record(snapshot);
-
-            // Update flight phase
-            phaseTracker.Update(snapshot, buffer);
-
-            // Match profile on first snapshot if not yet matched
-            if (activeProfile is null)
+            try
             {
-                var engineCount = (int)(snapshot.Get(SimVarId.NumberOfEngines) ?? 1);
-                var engineType = ((int)(snapshot.Get(SimVarId.EngineType) ?? 0)) == 0 ? "piston" : "turboprop";
-                activeProfile = profileLoader.MatchProfile("", engineCount, engineType);
+                buffer.Record(snapshot);
+
+                // Update flight phase
+                phaseTracker.Update(snapshot, buffer);
+
+                // Match profile on first snapshot if not yet matched
+                if (activeProfile is null)
+                {
+                    var engineCount = (int)(snapshot.Get(SimVarId.NumberOfEngines) ?? 1);
+                    var engineType = ((int)(snapshot.Get(SimVarId.EngineType) ?? 0)) == 0 ? "piston" : "turboprop";
+                    activeProfile = profileLoader.MatchProfile("", engineCount, engineType);
+                    if (activeProfile is not null)
+                        Log.Information("Active profile: {Id} ({Name})", activeProfile.AircraftId, activeProfile.DisplayName);
+                }
+
+                // Evaluate detection rules
                 if (activeProfile is not null)
-                    Log.Information("Active profile: {Id} ({Name})", activeProfile.AircraftId, activeProfile.DisplayName);
-            }
+                {
+                    detectionEngine.Evaluate(snapshot, buffer, activeProfile, phaseTracker.CurrentPhase);
+                }
 
-            // Evaluate detection rules
-            if (activeProfile is not null)
+                // Tick alert pipeline (sterile cockpit transitions + timed delivery)
+                alertPipeline.Tick(snapshot.Timestamp, phaseTracker.CurrentPhase);
+
+                Log.Verbose("Snapshot recorded: {Count} values at {Time}", snapshot.Keys.Count, snapshot.Timestamp);
+            }
+            catch (Exception ex)
             {
-                detectionEngine.Evaluate(snapshot, buffer, activeProfile, phaseTracker.CurrentPhase);
+                Log.Error(ex, "Error processing telemetry snapshot — skipping frame");
             }
-
-            // Tick alert pipeline (sterile cockpit transitions + timed delivery)
-            alertPipeline.Tick(snapshot.Timestamp, phaseTracker.CurrentPhase);
-
-            Log.Verbose("Snapshot recorded: {Count} values at {Time}", snapshot.Keys.Count, snapshot.Timestamp);
         };
 
         simConnect.OnStateChanged += state =>

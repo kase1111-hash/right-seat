@@ -152,39 +152,46 @@ public sealed class GuardianEngineService : IDisposable
 
     private void HandleSnapshot(TelemetrySnapshot snapshot)
     {
-        _buffer.Record(snapshot);
-        _phaseTracker.Update(snapshot, _buffer);
-
-        // Profile matching
-        if (_activeProfile is null)
+        try
         {
-            var engineCount = (int)(snapshot.Get(SimVarId.NumberOfEngines) ?? 1);
-            var engineType = ((int)(snapshot.Get(SimVarId.EngineType) ?? 0)) == 0 ? "piston" : "turboprop";
-            _activeProfile = _profileLoader.MatchProfile("", engineCount, engineType);
+            _buffer.Record(snapshot);
+            _phaseTracker.Update(snapshot, _buffer);
+
+            // Profile matching
+            if (_activeProfile is null)
+            {
+                var engineCount = (int)(snapshot.Get(SimVarId.NumberOfEngines) ?? 1);
+                var engineType = ((int)(snapshot.Get(SimVarId.EngineType) ?? 0)) == 0 ? "piston" : "turboprop";
+                _activeProfile = _profileLoader.MatchProfile("", engineCount, engineType);
+                if (_activeProfile is not null)
+                {
+                    Log.Information("Active profile: {Id} ({Name})", _activeProfile.AircraftId, _activeProfile.DisplayName);
+                    OnProfileMatched?.Invoke(_activeProfile);
+                }
+            }
+
+            // Detection
             if (_activeProfile is not null)
             {
-                Log.Information("Active profile: {Id} ({Name})", _activeProfile.AircraftId, _activeProfile.DisplayName);
-                OnProfileMatched?.Invoke(_activeProfile);
+                _detection.Evaluate(snapshot, _buffer, _activeProfile, _phaseTracker.CurrentPhase);
             }
-        }
 
-        // Detection
-        if (_activeProfile is not null)
+            // Alert pipeline tick
+            _pipeline.Tick(snapshot.Timestamp, _phaseTracker.CurrentPhase);
+
+            // Recording
+            if (_isRecording && _recordingWriter is not null)
+            {
+                WriteRecordingRow(snapshot);
+            }
+
+            // Notify UI
+            OnTelemetryUpdated?.Invoke(snapshot);
+        }
+        catch (Exception ex)
         {
-            _detection.Evaluate(snapshot, _buffer, _activeProfile, _phaseTracker.CurrentPhase);
+            Log.Error(ex, "Error processing telemetry snapshot — skipping frame");
         }
-
-        // Alert pipeline tick
-        _pipeline.Tick(snapshot.Timestamp, _phaseTracker.CurrentPhase);
-
-        // Recording
-        if (_isRecording && _recordingWriter is not null)
-        {
-            WriteRecordingRow(snapshot);
-        }
-
-        // Notify UI
-        OnTelemetryUpdated?.Invoke(snapshot);
     }
 
     // ── Recording ──

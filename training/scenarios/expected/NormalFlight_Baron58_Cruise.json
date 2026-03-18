@@ -1,0 +1,15 @@
+{
+  "description": "Normal Baron 58 twin-engine cruise — engines on separate tanks, balanced fuel, all systems nominal. No alerts should fire.",
+  "profile": "be58_baron",
+  "expected_alerts": [],
+  "forbidden_alerts": [
+    { "rule_id": "R001" },
+    { "rule_id": "R002" },
+    { "rule_id": "R003" },
+    { "rule_id": "R004" },
+    { "rule_id": "R005" },
+    { "rule_id": "R006" },
+    { "rule_id": "R007" },
+    { "rule_id": "R008" }
+  ]
+}

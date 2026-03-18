@@ -23,5 +23,6 @@
     <ProjectReference Include="..\Guardian.Detection\Guardian.Detection.csproj" />
     <ProjectReference Include="..\Guardian.Priority\Guardian.Priority.csproj" />
     <ProjectReference Include="..\Guardian.Efb\Guardian.Efb.csproj" />
+    <ProjectReference Include="..\Guardian.Replay\Guardian.Replay.csproj" />
   </ItemGroup>
 </Project>

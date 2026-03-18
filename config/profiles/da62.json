@@ -1,0 +1,65 @@
+{
+  "aircraft_id": "da62",
+  "display_name": "Diamond DA62",
+  "engine_type": "turbodiesel",
+  "engine_count": 2,
+  "msfs_titles": [
+    "Diamond DA62 Asobo",
+    "DA 62 Asobo"
+  ],
+  "fuel": {
+    "tank_count": 2,
+    "tank_names": ["left", "right"],
+    "total_capacity_gal": 47.3,
+    "usable_capacity_gal": 46,
+    "selector_positions": ["OFF", "ON"],
+    "normal_cruise_selector": "ON",
+    "imbalance_advisory_pct": 8,
+    "imbalance_warning_pct": 15,
+    "minimum_fuel_warning_gal": 6
+  },
+  "engine": {
+    "rpm_range": [600, 2300],
+    "rpm_cruise_typical": [1800, 2100],
+    "manifold_pressure_range_inhg": [15, 35],
+    "cht_normal_range_f": [200, 380],
+    "cht_redline_f": 430,
+    "cht_trend_advisory_f_per_min": 4,
+    "cht_trend_warning_f_per_min": 8,
+    "egt_normal_range_f": [900, 1400],
+    "egt_redline_f": 1520,
+    "oil_pressure_normal_psi": [40, 85],
+    "oil_pressure_minimum_psi": 15,
+    "oil_pressure_redline_psi": 90,
+    "oil_pressure_drop_rate_warning_psi_per_min": 8,
+    "oil_temp_normal_range_f": [100, 265],
+    "oil_temp_redline_f": 280,
+    "fuel_flow_cruise_gph": [5, 9]
+  },
+  "electrical": {
+    "main_bus_normal_v": [27.0, 29.0],
+    "main_bus_minimum_v": 24.0,
+    "battery_bus_minimum_v": 22.0
+  },
+  "vacuum": {
+    "suction_normal_inhg": [0, 0],
+    "suction_minimum_inhg": 0
+  },
+  "performance": {
+    "vne_kias": 192,
+    "vno_kias": 161,
+    "vs0_kias": 59,
+    "vs1_kias": 67,
+    "vfe_kias": 120,
+    "normal_approach_kias": [80, 100],
+    "normal_climb_fpm": [800, 1300]
+  },
+  "trim": {
+    "asymmetric_threshold_pct": 10
+  },
+  "icing": {
+    "has_anti_ice": true,
+    "has_pitot_heat": true,
+    "icing_oat_range_c": [-25, 5]
+  }
+}
