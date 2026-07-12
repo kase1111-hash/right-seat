@@ -20,10 +20,27 @@ public partial class MainWindowViewModel : ObservableObject
     public StateModelViewModel StateModel { get; }
 
     [ObservableProperty] private string _connectionState = "Disconnected";
-    [ObservableProperty] private string _connectionStateClass = "status-disconnected";
-    [ObservableProperty] private bool _isRecording;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsConnected))]
+    [NotifyPropertyChangedFor(nameof(IsConnecting))]
+    [NotifyPropertyChangedFor(nameof(IsDisconnected))]
+    private string _connectionStateClass = "status-disconnected";
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(RecordButtonText))]
+    private bool _isRecording;
+
     [ObservableProperty] private bool _isSterileCockpit;
     [ObservableProperty] private string _windowTitle = "Flight Guardian";
+
+    // Avalonia cannot bind the Classes collection directly, so the connection
+    // status class is exposed as one boolean per class for Classes.* bindings.
+    public bool IsConnected => ConnectionStateClass == "status-connected";
+    public bool IsConnecting => ConnectionStateClass == "status-connecting";
+    public bool IsDisconnected => ConnectionStateClass == "status-disconnected";
+
+    public string RecordButtonText => IsRecording ? "Stop Rec" : "Record";
 
     public MainWindowViewModel(GuardianEngineService engine, GuardianConfig config)
     {

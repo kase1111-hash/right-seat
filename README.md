@@ -65,40 +65,36 @@ This project was born from analysis of a real accident: a multi-engine aircraft 
 ## Project Structure
 
 ```
-flight-guardian/
-├── README.md                  # This file
-├── SPEC.md                    # Full technical specification
-├── CLAUDE.md                  # AI development instructions
-├── LICENSE
+right-seat/
+├── README.md                   # This file
+├── spec.md                     # Full technical specification
+├── LICENSE                     # MIT
+├── FlightGuardian.sln
+├── build.bat                   # One-step restore/build/test/publish (Windows)
+├── scripts/
+│   └── package_release.py      # Assembles the distributable release zip
 ├── config/
 │   ├── guardian.toml           # Runtime configuration
 │   └── profiles/               # Aircraft-specific normal operating ranges
-│       ├── c172.json
-│       ├── pa28.json
-│       ├── be58.json
-│       └── ...
 ├── src/
 │   ├── Guardian.Core/          # Shared types, interfaces, configuration
-│   ├── Guardian.SimConnect/    # SimConnect client and SimVar polling
+│   ├── Guardian.Common/        # Logging, profile loading, audio, utilities
+│   ├── Guardian.SimConnect/    # SimConnect client (live when MSFS SDK present)
 │   ├── Guardian.Detection/     # State tracker, anomaly detector, rules engine
 │   ├── Guardian.Priority/      # Alert priority queue and sterile cockpit logic
-│   ├── Guardian.App/           # External desktop application (WPF/Avalonia)
-│   └── Guardian.Common/        # Logging, telemetry recording, utilities
+│   ├── Guardian.Efb/           # HTTP API serving the EFB tablet app
+│   ├── Guardian.Replay/        # Scenario replay CLI (regression harness)
+│   ├── Guardian.App/           # Headless console monitor
+│   └── Guardian.Desktop/       # Avalonia desktop companion app
 ├── efb/
-│   ├── efb_api/                # MSFS EFB API (from SDK)
-│   └── GuardianApp/            # EFB tablet app source (JS/JSX)
+│   └── GuardianApp/            # EFB tablet app source (HTML/JS)
 ├── training/
-│   ├── scenarios/              # Recorded and NTSB-derived test scenarios
-│   ├── replay/                 # Scenario replay tooling
-│   └── scorecards/             # Detection performance results
+│   ├── scenarios/              # Recorded + synthetic validation scenarios
+│   └── tools/                  # Scenario generator
 ├── docs/
 │   ├── rules/                  # Detailed documentation per detection rule
-│   ├── simvars.md              # Complete SimVar reference and polling config
-│   └── architecture.md         # Detailed architecture documentation
-└── tests/
-    ├── Guardian.Detection.Tests/
-    ├── Guardian.Priority.Tests/
-    └── scenarios/              # Integration tests using recorded data
+│   └── simvars.md              # Complete SimVar reference and polling config
+└── tests/                      # xUnit test suites (226 tests)
 ```
 
 ## Getting Started
@@ -112,22 +108,39 @@ flight-guardian/
 - Visual Studio 2022 or JetBrains Rider (recommended)
 - Node.js 18+ (for EFB app development)
 
-### First Run
+### For Simmers (no build tools needed)
+
+1. Download `FlightGuardian-win-x64.zip` from the
+   [latest release](https://github.com/kase1111-hash/right-seat/releases)
+2. Unzip anywhere and run `Guardian.Desktop\Guardian.Desktop.exe`
+3. (Optional) Copy `community\flight-guardian-efb` into your MSFS
+   `Community` folder to get the in-cockpit EFB tablet app
+4. Launch MSFS 2024 and load a flight — Guardian connects automatically
+   and starts monitoring
+
+Audio chimes and voice callouts are built in (toggle in `config/guardian.toml`).
+
+### For Developers
 
 ```bash
 # Clone the repository
-git clone https://github.com/kase1111-hash/flight-guardian.git
-cd flight-guardian
+git clone https://github.com/kase1111-hash/right-seat.git
+cd right-seat
 
-# Build the core application
-dotnet build src/Guardian.App/Guardian.App.csproj
+# Build everything, run tests, publish executables (Windows)
+build.bat
 
-# Launch MSFS 2024, load any aircraft, then:
-dotnet run --project src/Guardian.App/Guardian.App.csproj
-
-# The external window will connect to the running sim
-# and begin displaying monitored parameters
+# Or manually on any platform (runs in stub/replay mode without MSFS):
+dotnet build FlightGuardian.sln
+dotnet test FlightGuardian.sln
+dotnet run --project src/Guardian.Replay -- training/scenarios
+dotnet run --project src/Guardian.App
 ```
+
+Live SimConnect telemetry requires Windows with the MSFS SDK installed.
+The build detects the SDK automatically through the `MSFS_SDK` environment
+variable (set by the SDK installer) and compiles in the live client; without
+it, everything still builds and runs against recorded scenarios.
 
 ### Development Workflow
 
@@ -154,27 +167,28 @@ dotnet run --project src/Guardian.App/Guardian.App.csproj
 ## Roadmap
 
 ### Phase 1: Proof of Concept
-- [ ] SimConnect client reading core engine and fuel SimVars
-- [ ] Rule R001 (fuel cross-feed) implemented and tested
-- [ ] External window displaying live state and alerts
-- [ ] Record/replay capability for captured sessions
+- [x] SimConnect client reading core engine and fuel SimVars
+- [x] Rule R001 (fuel cross-feed) implemented and tested
+- [x] External window displaying live state and alerts
+- [x] Record/replay capability for captured sessions
 
 ### Phase 2: Core Detection Suite
-- [ ] All v1 detection rules (R001–R008)
-- [ ] Flight phase detection (ground through landing)
-- [ ] Priority queue with sterile cockpit mode
-- [ ] Trend analysis engine with configurable windows
-- [ ] Aircraft profile system with first 5 airframes
+- [x] All v1 detection rules (R001–R008)
+- [x] Flight phase detection (ground through landing)
+- [x] Priority queue with sterile cockpit mode
+- [x] Trend analysis engine with configurable windows
+- [x] Aircraft profile system with 8 airframes
 
 ### Phase 3: EFB Integration
-- [ ] MSFS 2024 EFB app displaying alerts on cockpit tablet
-- [ ] Alert history and dismissal
-- [ ] Configuration accessible from EFB settings
+- [x] MSFS 2024 EFB app displaying alerts on cockpit tablet
+- [x] Alert history and dismissal
+- [x] Configuration accessible from EFB settings
 
 ### Phase 4: Training Pipeline
-- [ ] NTSB scenario parser and ingestion tools
-- [ ] Automated scenario replay through detection engine
-- [ ] Scorecard generation (detection time, false positive rate)
+- [x] NTSB scenario parser and ingestion tools
+- [x] Automated scenario replay through detection engine
+- [x] Scorecard generation (detection time, false positive rate)
+- [x] Validation scenarios covering every detection rule (runs in CI)
 - [ ] Parameter optimization feedback loop
 
 ### Phase 5: Demonstration

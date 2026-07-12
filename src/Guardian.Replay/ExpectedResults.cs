@@ -34,6 +34,10 @@ public sealed class ExpectedResults
     [JsonPropertyName("description")]
     public string Description { get; set; } = "";
 
+    /// <summary>Aircraft profile id to replay this scenario with (optional).</summary>
+    [JsonPropertyName("profile")]
+    public string? Profile { get; set; }
+
     [JsonPropertyName("expected_alerts")]
     public List<ExpectedAlert> ExpectedAlerts { get; set; } = new();
 

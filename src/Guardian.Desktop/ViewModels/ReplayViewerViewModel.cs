@@ -53,7 +53,8 @@ public partial class ReplayViewerViewModel : ObservableObject
         TotalTime = FormatDuration(duration);
 
         // Load profile
-        var profilesPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "config", "profiles");
+        var profilesPath = PathResolver.FindProfilesDirectory()
+            ?? Path.Combine(Environment.CurrentDirectory, "config", "profiles");
         var profileLoader = new ProfileLoader();
         profileLoader.LoadProfiles(profilesPath);
 
@@ -110,8 +111,8 @@ public partial class ReplayViewerViewModel : ObservableObject
 
         if (File.Exists(expectedPath))
         {
-            var expectedResults = ExpectedResults.LoadFromFile(expectedPath);
-            _lastValidation = ScenarioValidator.Validate(_lastResult, expectedResults, startTime);
+            var expectedResults = ExpectedResults.Load(expectedPath);
+            _lastValidation = new ScenarioValidator().Validate(_lastResult, expectedResults);
 
             MatchedCount = _lastValidation.Matched.Count;
             MissingCount = _lastValidation.Missing.Count;
@@ -125,12 +126,14 @@ public partial class ReplayViewerViewModel : ObservableObject
             // Show expected alerts in the list
             foreach (var expected in expectedResults.ExpectedAlerts)
             {
-                var matched = _lastValidation.Matched.Any(m => m.RuleId == expected.RuleId);
+                var matched = _lastValidation.Matched.Any(m => m.ExpectedRuleId == expected.RuleId);
                 ExpectedAlerts.Add(new ExpectedAlertEntryViewModel
                 {
                     RuleId = expected.RuleId,
                     Severity = expected.Severity,
-                    TimeWindow = $"{expected.MinTimeSec:F0}s – {expected.MaxTimeSec:F0}s",
+                    TimeWindow = expected.LatestSec == double.MaxValue
+                        ? $"{expected.EarliestSec:F0}s+"
+                        : $"{expected.EarliestSec:F0}s – {expected.LatestSec:F0}s",
                     Matched = matched,
                 });
             }

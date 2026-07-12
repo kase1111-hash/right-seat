@@ -41,24 +41,51 @@ public sealed class R005_FuelImbalance : IDetectionRule
     {
         var fuel = profile.Fuel;
 
-        // Get tank quantities (use first two tanks as left/right)
+        // Get tank quantities. A tank the sim reports nothing for must not
+        // be confused with an empty tank.
         var tankQtys = new double[fuel.TankCount];
+        var tankHasData = new bool[fuel.TankCount];
         double totalFuel = 0;
 
         for (int t = 0; t < fuel.TankCount; t++)
         {
-            tankQtys[t] = current.Get(SimVarId.FuelSystemTankQuantity, t) ?? 0;
+            var qty = current.Get(SimVarId.FuelSystemTankQuantity, t);
+            tankHasData[t] = qty is not null;
+            tankQtys[t] = qty ?? 0;
             totalFuel += tankQtys[t];
         }
 
         if (totalFuel < 1.0) return null; // effectively empty, nothing to balance
 
-        // Check minimum fuel per tank — CRITICAL
+        // Tanks currently feeding an engine (selector values are 1-based tank
+        // numbers, 0 = OFF; a value past the last tank means BOTH/ALL).
+        var tanksInUse = new HashSet<int>();
+        for (int e = 1; e <= Math.Max(profile.EngineCount, 1); e++)
+        {
+            var sel = current.Get(SimVarId.FuelTankSelector, e);
+            if (sel is null || sel.Value < 0.5) continue;
+
+            int tankIndex = (int)sel.Value - 1;
+            if (tankIndex < fuel.TankCount)
+            {
+                tanksInUse.Add(tankIndex);
+            }
+            else
+            {
+                // BOTH/ALL position — every tank is feeding
+                for (int t = 0; t < fuel.TankCount; t++) tanksInUse.Add(t);
+            }
+        }
+
+        // Check minimum fuel per in-use tank — CRITICAL.
+        // An empty aux tank nobody is feeding from is normal, not an emergency.
         for (int t = 0; t < fuel.TankCount; t++)
         {
+            if (!tankHasData[t] || !tanksInUse.Contains(t)) continue;
+
             if (tankQtys[t] < fuel.MinimumFuelWarningGal && totalFuel > fuel.MinimumFuelWarningGal * 2)
             {
-                // One tank critically low but other tanks have fuel
+                // The feeding tank is critically low but other tanks have fuel
                 var tankName = t < fuel.TankNames.Count ? fuel.TankNames[t] : $"tank_{t}";
                 return new Alert
                 {

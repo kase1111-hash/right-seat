@@ -1,0 +1,38 @@
+{
+  "scenario_id": "R006_IcingEncounter_C172",
+  "description": "C172SP: enters cloud at -5C at T+30s, structural ice accumulating 6%/min from T+60s. Structural ice warning at the 5% threshold.",
+  "profile": "c172sp",
+  "expected_alerts": [
+    {
+      "rule_id": "R006",
+      "severity": "Warning",
+      "text_key": "R006_STRUCTURAL_ICE_WARNING",
+      "earliest_sec": 100,
+      "latest_sec": 180,
+      "required": true
+    }
+  ],
+  "forbidden_alerts": [
+    {
+      "rule_id": "R001"
+    },
+    {
+      "rule_id": "R002"
+    },
+    {
+      "rule_id": "R003"
+    },
+    {
+      "rule_id": "R004"
+    },
+    {
+      "rule_id": "R005"
+    },
+    {
+      "rule_id": "R007"
+    },
+    {
+      "rule_id": "R008"
+    }
+  ]
+}

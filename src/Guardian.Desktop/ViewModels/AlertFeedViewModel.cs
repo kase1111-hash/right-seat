@@ -103,9 +103,23 @@ public partial class AlertEntryViewModel : ObservableObject
     [ObservableProperty] private string _formattedText = "";
     [ObservableProperty] private string _flightPhase = "";
     [ObservableProperty] private bool _wasDeferredFromSterile;
-    [ObservableProperty] private string _severityClass = "";
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsCritical))]
+    [NotifyPropertyChangedFor(nameof(IsWarning))]
+    [NotifyPropertyChangedFor(nameof(IsAdvisory))]
+    [NotifyPropertyChangedFor(nameof(IsInfo))]
+    private string _severityClass = "";
+
     [ObservableProperty] private Dictionary<string, double> _telemetrySnapshot = new();
 
     public string TimestampDisplay => Timestamp.ToString("HH:mm:ss");
     public string SeverityDisplay => Severity.ToString().ToUpperInvariant();
+
+    // Avalonia cannot bind the Classes collection directly, so the severity
+    // style class is exposed as one boolean per class for Classes.* bindings.
+    public bool IsCritical => SeverityClass == "severity-critical";
+    public bool IsWarning => SeverityClass == "severity-warning";
+    public bool IsAdvisory => SeverityClass == "severity-advisory";
+    public bool IsInfo => SeverityClass == "severity-info";
 }

@@ -64,6 +64,11 @@ public sealed class ProfileLoader
     /// </summary>
     public AircraftProfile? MatchProfile(string msfsTitle, int engineCount, string engineType)
     {
+        // An empty title must fall through to the generic profiles —
+        // string.Contains("") is always true and would match arbitrarily.
+        if (string.IsNullOrWhiteSpace(msfsTitle))
+            return MatchGeneric(msfsTitle, engineCount);
+
         // 1. Exact match on MSFS title
         if (_titleIndex.TryGetValue(msfsTitle, out var exact))
         {
@@ -95,6 +100,11 @@ public sealed class ProfileLoader
         }
 
         // 3. Generic fallback by engine count and type
+        return MatchGeneric(msfsTitle, engineCount);
+    }
+
+    private AircraftProfile? MatchGeneric(string msfsTitle, int engineCount)
+    {
         var genericId = engineCount > 1
             ? "generic_twin_piston"
             : "generic_single_piston";
@@ -105,7 +115,7 @@ public sealed class ProfileLoader
             return generic;
         }
 
-        // 4. No match at all
+        // No match at all
         Log.Warning("No profile match for {Title}. Running in limited mode.", msfsTitle);
         return null;
     }
@@ -114,7 +124,7 @@ public sealed class ProfileLoader
     /// Converts pilot-friendly units in the profile to native SimConnect units.
     /// Fahrenheit → Rankine for temperatures, per-minute rates → per-second.
     /// </summary>
-    internal static void ConvertUnits(AircraftProfile profile)
+    public static void ConvertUnits(AircraftProfile profile)
     {
         var eng = profile.Engine;
 

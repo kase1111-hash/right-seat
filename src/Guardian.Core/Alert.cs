@@ -46,8 +46,12 @@ public sealed class Alert
     /// </summary>
     public Dictionary<string, string> TextParameters { get; init; } = new();
 
-    /// <summary>UTC timestamp when the alert was generated.</summary>
-    public DateTime Timestamp { get; init; } = DateTime.UtcNow;
+    /// <summary>
+    /// UTC timestamp when the alert was generated. Stamped by the detection
+    /// engine with the telemetry snapshot time, so replayed scenarios carry
+    /// scenario time rather than wall-clock time.
+    /// </summary>
+    public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// Snapshot of relevant telemetry values at the time of alert generation.

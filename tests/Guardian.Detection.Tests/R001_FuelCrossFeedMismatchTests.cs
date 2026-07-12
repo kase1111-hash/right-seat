@@ -43,9 +43,9 @@ public class R001_FuelCrossFeedMismatchTests
     public void NormalOps_BothEnginesDifferentTanks_NoAlert()
     {
         var snap = new TelemetrySnapshot();
-        // Engine 1 on left tank (selector=0), Engine 2 on right tank (selector=1)
-        snap.Set(SimVarId.FuelTankSelector, 0, index: 1);
-        snap.Set(SimVarId.FuelTankSelector, 1, index: 2);
+        // Engine 1 on left tank (selector=1), Engine 2 on right tank (selector=2)
+        snap.Set(SimVarId.FuelTankSelector, 1, index: 1);
+        snap.Set(SimVarId.FuelTankSelector, 2, index: 2);
         snap.Set(SimVarId.GeneralEngFuelFlow, 14.0, index: 1);
         snap.Set(SimVarId.GeneralEngFuelFlow, 14.0, index: 2);
         snap.Set(SimVarId.GeneralEngCombustion, 1.0, index: 1);
@@ -177,9 +177,9 @@ public class R001_FuelCrossFeedMismatchTests
         int bothOnTank, double fuelFlowPerEngine, double activeTankQty, double otherTankQty)
     {
         var snap = new TelemetrySnapshot();
-        // Both engines on same tank
-        snap.Set(SimVarId.FuelTankSelector, bothOnTank, index: 1);
-        snap.Set(SimVarId.FuelTankSelector, bothOnTank, index: 2);
+        // Both engines on same tank (selector values are 1-based; 0 = OFF)
+        snap.Set(SimVarId.FuelTankSelector, bothOnTank + 1, index: 1);
+        snap.Set(SimVarId.FuelTankSelector, bothOnTank + 1, index: 2);
         snap.Set(SimVarId.GeneralEngFuelFlow, fuelFlowPerEngine, index: 1);
         snap.Set(SimVarId.GeneralEngFuelFlow, fuelFlowPerEngine, index: 2);
         snap.Set(SimVarId.GeneralEngCombustion, 1.0, index: 1);

@@ -56,3 +56,5 @@ efb/GuardianApp/dist/
 *.pem
 *.pfx
 secrets/
+training/scenarios/scorecard.json
+dist/

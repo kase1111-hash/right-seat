@@ -16,7 +16,7 @@ internal class MockRule : IDetectionRule
 
     public Alert? AlertToReturn { get; set; }
     public bool ThrowOnEvaluate { get; set; }
-    public int EvaluateCallCount { get; private set; }
+    public int EvaluateCallCount { get; set; }
 
     public Func<AircraftProfile, FlightPhase, bool>? IsApplicableFunc { get; set; }
 

@@ -18,6 +18,7 @@ public sealed class FlightPhaseTracker
     private const double VerticalSpeedClimbThreshold = 200.0;   // fpm
     private const double VerticalSpeedDescentThreshold = -200.0; // fpm
     private const double ApproachAltitudeAgl = 3000.0;          // feet (approximated)
+    private const double TakeoffAltitudeCeiling = 1000.0;       // feet — above this a climb is Climb, not Takeoff
     private const double OnGroundThreshold = 0.5;                // SimOnGround bool
 
     private FlightPhase _currentPhase = FlightPhase.Ground;
@@ -84,7 +85,8 @@ public sealed class FlightPhaseTracker
         if (verticalSpeed > VerticalSpeedClimbThreshold)
         {
             // Could be takeoff (low altitude, recently on ground) or climb
-            if (_currentPhase == FlightPhase.Ground || _currentPhase == FlightPhase.Takeoff)
+            if ((_currentPhase == FlightPhase.Ground || _currentPhase == FlightPhase.Takeoff)
+                && altitude < TakeoffAltitudeCeiling)
                 return FlightPhase.Takeoff;
 
             return FlightPhase.Climb;

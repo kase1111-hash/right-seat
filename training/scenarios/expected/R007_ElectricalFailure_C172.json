@@ -1,0 +1,46 @@
+{
+  "scenario_id": "R007_ElectricalFailure_C172",
+  "description": "C172SP: alternator failure at T+30s, main bus decaying 0.5 V/min. Trend warning once the 120s window confirms the decay; critical when the bus passes the 12.0V minimum (~T+282s).",
+  "profile": "c172sp",
+  "expected_alerts": [
+    {
+      "rule_id": "R007",
+      "severity": "Warning",
+      "text_key": "R007_MAIN_BUS_TREND_WARNING",
+      "earliest_sec": 100,
+      "latest_sec": 240,
+      "required": true
+    },
+    {
+      "rule_id": "R007",
+      "severity": "Critical",
+      "text_key": "R007_MAIN_BUS_CRITICAL",
+      "earliest_sec": 250,
+      "latest_sec": 300,
+      "required": true
+    }
+  ],
+  "forbidden_alerts": [
+    {
+      "rule_id": "R001"
+    },
+    {
+      "rule_id": "R002"
+    },
+    {
+      "rule_id": "R003"
+    },
+    {
+      "rule_id": "R004"
+    },
+    {
+      "rule_id": "R005"
+    },
+    {
+      "rule_id": "R006"
+    },
+    {
+      "rule_id": "R008"
+    }
+  ]
+}

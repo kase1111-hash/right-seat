@@ -1,0 +1,38 @@
+{
+  "scenario_id": "R005_FuelImbalance_C172",
+  "description": "C172SP: right tank leaking 2 gal/min from T+30s. Imbalance grows through the 10% advisory threshold to the 20% warning threshold.",
+  "profile": "c172sp",
+  "expected_alerts": [
+    {
+      "rule_id": "R005",
+      "severity": "Warning",
+      "text_key": "R005_FUEL_IMBALANCE_WARNING",
+      "earliest_sec": 100,
+      "latest_sec": 260,
+      "required": true
+    }
+  ],
+  "forbidden_alerts": [
+    {
+      "rule_id": "R001"
+    },
+    {
+      "rule_id": "R002"
+    },
+    {
+      "rule_id": "R003"
+    },
+    {
+      "rule_id": "R004"
+    },
+    {
+      "rule_id": "R006"
+    },
+    {
+      "rule_id": "R007"
+    },
+    {
+      "rule_id": "R008"
+    }
+  ]
+}

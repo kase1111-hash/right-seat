@@ -1,15 +1,32 @@
 {
-  "description": "Normal C172SP cruise flight — all parameters within limits. No alerts should fire.",
+  "scenario_id": "NormalFlight_C172SP_Cruise",
+  "description": "Normal C172SP cruise, 5 minutes \u2014 all parameters within limits. No alerts may fire.",
   "profile": "c172sp",
   "expected_alerts": [],
   "forbidden_alerts": [
-    { "rule_id": "R001" },
-    { "rule_id": "R002" },
-    { "rule_id": "R003" },
-    { "rule_id": "R004" },
-    { "rule_id": "R005" },
-    { "rule_id": "R006" },
-    { "rule_id": "R007" },
-    { "rule_id": "R008" }
+    {
+      "rule_id": "R001"
+    },
+    {
+      "rule_id": "R002"
+    },
+    {
+      "rule_id": "R003"
+    },
+    {
+      "rule_id": "R004"
+    },
+    {
+      "rule_id": "R005"
+    },
+    {
+      "rule_id": "R006"
+    },
+    {
+      "rule_id": "R007"
+    },
+    {
+      "rule_id": "R008"
+    }
   ]
 }
