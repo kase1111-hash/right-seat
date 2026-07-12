@@ -1,0 +1,38 @@
+{
+  "scenario_id": "R008_VacuumFailure_C172",
+  "description": "C172SP in IMC: vacuum pump failing from T+30s, suction bleeding off at 1.2 inHg/min. Advisory below the normal range, warning when below the 3.5 inHg gyro-reliability minimum (IMC keeps severity at warning).",
+  "profile": "c172sp",
+  "expected_alerts": [
+    {
+      "rule_id": "R008",
+      "severity": "Warning",
+      "text_key": "R008_VACUUM_LOW",
+      "earliest_sec": 95,
+      "latest_sec": 180,
+      "required": true
+    }
+  ],
+  "forbidden_alerts": [
+    {
+      "rule_id": "R001"
+    },
+    {
+      "rule_id": "R002"
+    },
+    {
+      "rule_id": "R003"
+    },
+    {
+      "rule_id": "R004"
+    },
+    {
+      "rule_id": "R005"
+    },
+    {
+      "rule_id": "R006"
+    },
+    {
+      "rule_id": "R007"
+    }
+  ]
+}

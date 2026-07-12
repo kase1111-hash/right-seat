@@ -1,6 +1,6 @@
 {
   "scenario_id": "NormalFlight_Baron58_Cruise",
-  "description": "Normal Baron 58 twin-engine cruise \u2014 engines on separate tanks, balanced fuel, all systems nominal. No alerts should fire.",
+  "description": "Normal Baron 58 twin cruise, 5 minutes \u2014 engines on separate tanks, balanced fuel, all systems nominal. No alerts may fire.",
   "profile": "be58_baron",
   "expected_alerts": [],
   "forbidden_alerts": [

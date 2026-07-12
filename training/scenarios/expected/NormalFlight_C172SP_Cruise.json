@@ -1,6 +1,6 @@
 {
   "scenario_id": "NormalFlight_C172SP_Cruise",
-  "description": "Normal C172SP cruise flight \u2014 all parameters within limits. No alerts should fire.",
+  "description": "Normal C172SP cruise, 5 minutes \u2014 all parameters within limits. No alerts may fire.",
   "profile": "c172sp",
   "expected_alerts": [],
   "forbidden_alerts": [

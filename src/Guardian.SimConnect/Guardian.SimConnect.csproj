@@ -9,13 +9,28 @@
     <ProjectReference Include="..\Guardian.Core\Guardian.Core.csproj" />
     <ProjectReference Include="..\Guardian.Common\Guardian.Common.csproj" />
   </ItemGroup>
+
   <!--
-    SimConnect managed SDK reference. When building on a machine with MSFS SDK installed,
-    uncomment and set the correct path:
-    <ItemGroup>
-      <Reference Include="Microsoft.FlightSimulator.SimConnect">
-        <HintPath>$(MSFS_SDK)\SimConnect SDK\lib\managed\Microsoft.FlightSimulator.SimConnect.dll</HintPath>
-      </Reference>
-    </ItemGroup>
+    SimConnect managed SDK reference.
+
+    The MSFS SDK installer sets the MSFS_SDK environment variable. When the
+    managed SimConnect DLL is found there (or SIMCONNECT_MANAGED_DLL is set
+    explicitly), the live SimConnect session is compiled in automatically.
+    Without the SDK the project still builds and runs in stub/replay mode,
+    so CI and non-Windows development keep working.
   -->
+  <PropertyGroup>
+    <SimConnectManagedDll Condition="'$(SimConnectManagedDll)' == '' And '$(SIMCONNECT_MANAGED_DLL)' != ''">$(SIMCONNECT_MANAGED_DLL)</SimConnectManagedDll>
+    <SimConnectManagedDll Condition="'$(SimConnectManagedDll)' == ''">$(MSFS_SDK)\SimConnect SDK\lib\managed\Microsoft.FlightSimulator.SimConnect.dll</SimConnectManagedDll>
+    <SimConnectNativeDll Condition="'$(SimConnectNativeDll)' == ''">$(MSFS_SDK)\SimConnect SDK\lib\SimConnect.dll</SimConnectNativeDll>
+  </PropertyGroup>
+  <PropertyGroup Condition="Exists('$(SimConnectManagedDll)')">
+    <DefineConstants>$(DefineConstants);SIMCONNECT_SDK</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="Exists('$(SimConnectManagedDll)')">
+    <Reference Include="Microsoft.FlightSimulator.SimConnect">
+      <HintPath>$(SimConnectManagedDll)</HintPath>
+    </Reference>
+    <None Include="$(SimConnectNativeDll)" Condition="Exists('$(SimConnectNativeDll)')" Link="SimConnect.dll" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

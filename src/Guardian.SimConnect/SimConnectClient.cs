@@ -18,9 +18,11 @@ public enum ConnectionState
 /// Wraps the MSFS SimConnect managed SDK. Handles connection lifecycle,
 /// data definition registration, polling, and reconnection with backoff.
 ///
-/// When the MSFS SDK is not available (e.g., Linux dev environment), the client
-/// operates in stub mode — it logs what it would do but produces no data.
-/// Use SimConnectDataSource for a testable abstraction over live vs. replay data.
+/// When built with the MSFS SDK present (SIMCONNECT_SDK, see the csproj),
+/// the client drives a LiveSimConnectSession against the running sim.
+/// Without the SDK (e.g., Linux dev environment or CI) it operates in stub
+/// mode — it logs what it would do but produces no data. Replay and EFB
+/// features work in both modes.
 /// </summary>
 public sealed class SimConnectClient : IDisposable
 {
@@ -47,6 +49,9 @@ public sealed class SimConnectClient : IDisposable
 
     /// <summary>Fired when connection state changes.</summary>
     public event Action<ConnectionState>? OnStateChanged;
+
+    /// <summary>Fired once per connection with the loaded aircraft's TITLE, for profile matching.</summary>
+    public event Action<string>? OnAircraftTitle;
 
     public SimConnectClient(
         int retryIntervalMs = 5000,
@@ -95,20 +100,35 @@ public sealed class SimConnectClient : IDisposable
                 SetState(ConnectionState.Connecting);
                 Log.Information("Attempting SimConnect connection (attempt {Attempt})...", attempts + 1);
 
-                // NOTE: Actual SimConnect connection code goes here.
-                // This requires the Microsoft.FlightSimulator.SimConnect managed DLL
-                // which is only available on Windows with MSFS SDK installed.
-                //
-                // The connection would:
-                // 1. new SimConnect("Flight Guardian", windowHandle, WM_USER_SIMCONNECT, null, 0)
-                // 2. Register data definitions for all SimVarId values
-                // 3. Call RequestDataOnSimObject for each polling group
-                //
-                // For now, log and wait — this allows the project to build and test
-                // on any platform, with actual SimConnect wired in when SDK is available.
+#if SIMCONNECT_SDK
+                using (var session = new LiveSimConnectSession(
+                    _groupAIntervalMs,
+                    snapshot => OnSnapshot?.Invoke(snapshot),
+                    title => OnAircraftTitle?.Invoke(title),
+                    MarkUnavailable))
+                {
+                    // Throws COMException when the sim is not running.
+                    session.Connect();
+                    SetState(ConnectionState.Connected);
+                    attempts = 0;
 
+                    // Runs until the sim quits, the receive loop faults,
+                    // or we are cancelled.
+                    await session.Closed.WaitAsync(ct);
+                }
+
+                if (ct.IsCancellationRequested)
+                    break;
+
+                Log.Information("SimConnect session ended — will reconnect");
+                SetState(ConnectionState.Reconnecting);
+#else
+                // Built without the MSFS SDK (see Guardian.SimConnect.csproj).
+                // Stub mode keeps replay, EFB, and UI development working on
+                // any platform — it just produces no live telemetry.
                 Log.Warning("SimConnect SDK not linked. Running in stub mode — no live telemetry.");
                 SetState(ConnectionState.Disconnected);
+#endif
 
                 attempts++;
                 if (_maxRetries > 0 && attempts >= _maxRetries)
@@ -127,27 +147,14 @@ public sealed class SimConnectClient : IDisposable
             {
                 Log.Error(ex, "SimConnect connection error");
                 SetState(ConnectionState.Reconnecting);
+                attempts++;
+                if (_maxRetries > 0 && attempts >= _maxRetries)
+                {
+                    Log.Error("Max SimConnect connection retries ({Max}) reached. Giving up.", _maxRetries);
+                    break;
+                }
                 await Task.Delay(_retryIntervalMs, ct);
             }
-        }
-    }
-
-    /// <summary>
-    /// Registers data definitions for all monitored SimVars.
-    /// Called after successful connection.
-    /// </summary>
-    private void RegisterDataDefinitions()
-    {
-        foreach (SimVarId id in Enum.GetValues<SimVarId>())
-        {
-            var name = SimVarMetadata.GetSimConnectName(id);
-            var unit = SimVarMetadata.GetSimConnectUnit(id);
-            var group = SimVarMetadata.GetGroup(id);
-
-            Log.Debug("Registering SimVar: {Name} ({Unit}) in {Group}", name, unit, group);
-
-            // SimConnect.AddToDataDefinition(...)
-            // Actual SDK call would go here
         }
     }
 
@@ -165,7 +172,7 @@ public sealed class SimConnectClient : IDisposable
 
     /// <summary>
     /// Called when SimConnect delivers a data snapshot. Builds a TelemetrySnapshot
-    /// and fires the OnSnapshot event.
+    /// and fires the OnSnapshot event. Also used by tests and replay tooling.
     /// </summary>
     internal void HandleDataReceived(Dictionary<SimVarKey, double> values, DateTime timestamp)
     {

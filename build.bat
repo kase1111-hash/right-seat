@@ -64,6 +64,14 @@ if errorlevel 1 (
     echo WARNING: Guardian.Replay publish failed.
 )
 
+echo [5/5] Assembling release package (optional, needs Python)...
+where python >nul 2>&1
+if not errorlevel 1 (
+    python scripts\package_release.py
+) else (
+    echo   Python not found - skipping release zip. Run scripts\package_release.py manually.
+)
+
 echo.
 echo ============================================
 echo  Build complete!

@@ -28,8 +28,10 @@ public sealed class GuardianEngineService : IDisposable
     private EfbStateProvider? _efbState;
 
     private AircraftProfile? _activeProfile;
+    private string _aircraftTitle = "";
     private bool _isRecording;
     private StreamWriter? _recordingWriter;
+    private readonly AudioPlayer _audioPlayer = new();
 
     // Events for UI binding
     public event Action<TelemetrySnapshot>? OnTelemetryUpdated;
@@ -92,6 +94,10 @@ public sealed class GuardianEngineService : IDisposable
         {
             OnInfoLogged?.Invoke(info);
         };
+
+        // Audio output: synthesized chimes + voice callouts (Windows)
+        _pipeline.Audio.OnPlayTone += (toneId, _) => _audioPlayer.PlayTone(toneId);
+        _pipeline.Audio.OnSpeak += text => _audioPlayer.Speak(text);
     }
 
     public void Start()
@@ -111,6 +117,11 @@ public sealed class GuardianEngineService : IDisposable
             groupCIntervalMs: _config.GroupCIntervalMs);
 
         _simConnect.OnSnapshot += HandleSnapshot;
+        _simConnect.OnAircraftTitle += title =>
+        {
+            _aircraftTitle = title;
+            _activeProfile = null; // re-match against the named aircraft
+        };
         _simConnect.OnStateChanged += state =>
         {
             OnConnectionStateChanged?.Invoke(state.ToString());
@@ -163,7 +174,7 @@ public sealed class GuardianEngineService : IDisposable
             {
                 var engineCount = (int)(snapshot.Get(SimVarId.NumberOfEngines) ?? 1);
                 var engineType = ((int)(snapshot.Get(SimVarId.EngineType) ?? 0)) == 0 ? "piston" : "turboprop";
-                _activeProfile = _profileLoader.MatchProfile("", engineCount, engineType);
+                _activeProfile = _profileLoader.MatchProfile(_aircraftTitle, engineCount, engineType);
                 if (_activeProfile is not null)
                 {
                     Log.Information("Active profile: {Id} ({Name})", _activeProfile.AircraftId, _activeProfile.DisplayName);
@@ -237,5 +248,6 @@ public sealed class GuardianEngineService : IDisposable
     public void Dispose()
     {
         Stop();
+        _audioPlayer.Dispose();
     }
 }

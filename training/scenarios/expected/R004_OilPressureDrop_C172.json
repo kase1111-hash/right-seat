@@ -1,0 +1,38 @@
+{
+  "scenario_id": "R004_OilPressureDrop_C172",
+  "description": "C172SP: oil pressure dropping 15 psi/min from T+30s (oil leak). Drop-rate warning first, critical when pressure passes the 25 psi minimum around T+218s... capped at T+180s so warning only.",
+  "profile": "c172sp",
+  "expected_alerts": [
+    {
+      "rule_id": "R004",
+      "severity": "Warning",
+      "text_key": "R004_OIL_PRESSURE_DROP_RATE",
+      "earliest_sec": 40,
+      "latest_sec": 140,
+      "required": true
+    }
+  ],
+  "forbidden_alerts": [
+    {
+      "rule_id": "R001"
+    },
+    {
+      "rule_id": "R002"
+    },
+    {
+      "rule_id": "R003"
+    },
+    {
+      "rule_id": "R005"
+    },
+    {
+      "rule_id": "R006"
+    },
+    {
+      "rule_id": "R007"
+    },
+    {
+      "rule_id": "R008"
+    }
+  ]
+}

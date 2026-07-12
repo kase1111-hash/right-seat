@@ -1,0 +1,46 @@
+{
+  "scenario_id": "R002_PowerAsymmetry_Baron",
+  "description": "Baron 58: engine 2 throttle pulled to 40% at T+30s with no rudder trim compensation. Advisory immediately, escalates to warning after 60s persistence.",
+  "profile": "be58_baron",
+  "expected_alerts": [
+    {
+      "rule_id": "R002",
+      "severity": "Advisory",
+      "text_key": "R002_POWER_ASYMMETRY_NO_TRIM",
+      "earliest_sec": 30,
+      "latest_sec": 90,
+      "required": true
+    },
+    {
+      "rule_id": "R002",
+      "severity": "Warning",
+      "text_key": "R002_POWER_ASYMMETRY_NO_TRIM",
+      "earliest_sec": 90,
+      "latest_sec": 200,
+      "required": true
+    }
+  ],
+  "forbidden_alerts": [
+    {
+      "rule_id": "R001"
+    },
+    {
+      "rule_id": "R003"
+    },
+    {
+      "rule_id": "R004"
+    },
+    {
+      "rule_id": "R005"
+    },
+    {
+      "rule_id": "R006"
+    },
+    {
+      "rule_id": "R007"
+    },
+    {
+      "rule_id": "R008"
+    }
+  ]
+}

@@ -57,6 +57,12 @@ public static class Program
         detectionEngine.Register(new R008_VacuumSystemFailure());
         // Initialize alert pipeline
         var alertPipeline = new AlertPipeline(config);
+
+        // Audio output: synthesized chimes + voice callouts (Windows)
+        using var audioPlayer = new AudioPlayer();
+        alertPipeline.Audio.OnPlayTone += (toneId, _) => audioPlayer.PlayTone(toneId);
+        alertPipeline.Audio.OnSpeak += text => audioPlayer.Speak(text);
+
         alertPipeline.OnAlertDelivered += delivered =>
         {
             Log.Warning("DELIVERED: {Alert} (deferred={Deferred})",
@@ -79,6 +85,7 @@ public static class Program
 
         // Use generic profile until aircraft is identified
         AircraftProfile? activeProfile = null;
+        string aircraftTitle = "";
 
         // Initialize SimConnect client
         using var simConnect = new SimConnectClient(
@@ -87,6 +94,12 @@ public static class Program
             groupAIntervalMs: config.GroupAIntervalMs,
             groupBIntervalMs: config.GroupBIntervalMs,
             groupCIntervalMs: config.GroupCIntervalMs);
+
+        simConnect.OnAircraftTitle += title =>
+        {
+            aircraftTitle = title;
+            activeProfile = null; // re-match against the named aircraft
+        };
 
         simConnect.OnSnapshot += snapshot =>
         {
@@ -102,7 +115,7 @@ public static class Program
                 {
                     var engineCount = (int)(snapshot.Get(SimVarId.NumberOfEngines) ?? 1);
                     var engineType = ((int)(snapshot.Get(SimVarId.EngineType) ?? 0)) == 0 ? "piston" : "turboprop";
-                    activeProfile = profileLoader.MatchProfile("", engineCount, engineType);
+                    activeProfile = profileLoader.MatchProfile(aircraftTitle, engineCount, engineType);
                     if (activeProfile is not null)
                         Log.Information("Active profile: {Id} ({Name})", activeProfile.AircraftId, activeProfile.DisplayName);
                 }

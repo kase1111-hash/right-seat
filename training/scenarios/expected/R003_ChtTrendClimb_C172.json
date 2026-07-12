@@ -1,0 +1,38 @@
+{
+  "scenario_id": "R003_ChtTrendClimb_C172",
+  "description": "C172SP: CHT rising at 12 F/min from T+30s (cooling airflow blockage). Trend warning once the 60s regression window confirms the rate; absolute redline never reached.",
+  "profile": "c172sp",
+  "expected_alerts": [
+    {
+      "rule_id": "R003",
+      "severity": "Warning",
+      "text_key": "R003_CHT_TREND_WARNING",
+      "earliest_sec": 45,
+      "latest_sec": 150,
+      "required": true
+    }
+  ],
+  "forbidden_alerts": [
+    {
+      "rule_id": "R001"
+    },
+    {
+      "rule_id": "R002"
+    },
+    {
+      "rule_id": "R004"
+    },
+    {
+      "rule_id": "R005"
+    },
+    {
+      "rule_id": "R006"
+    },
+    {
+      "rule_id": "R007"
+    },
+    {
+      "rule_id": "R008"
+    }
+  ]
+}

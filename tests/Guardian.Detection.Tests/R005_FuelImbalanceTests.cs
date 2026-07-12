@@ -126,6 +126,9 @@ public class R005_FuelImbalanceTests
         snap.Set(SimVarId.FuelSystemTankQuantity, left, 0);
         snap.Set(SimVarId.FuelSystemTankQuantity, right, 1);
         snap.Set(SimVarId.FuelTotalQuantity, left + right);
+        // Engine 1 feeding from the left tank (selector values are 1-based).
+        // The minimum-fuel check only applies to tanks in use.
+        snap.Set(SimVarId.FuelTankSelector, 1, 1);
         return snap;
     }
 }
