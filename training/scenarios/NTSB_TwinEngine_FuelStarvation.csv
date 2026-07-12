@@ -7,8 +7,8 @@ timestamp,simvar_id,index,value
 2024-01-15T10:00:00.000Z,GeneralEngRpm,2,2400
 2024-01-15T10:00:00.000Z,ThrottleLeverPosition,1,75
 2024-01-15T10:00:00.000Z,ThrottleLeverPosition,2,75
-2024-01-15T10:00:00.000Z,RecipEngFuelFlow,1,10.5
-2024-01-15T10:00:00.000Z,RecipEngFuelFlow,2,10.5
+2024-01-15T10:00:00.000Z,GeneralEngFuelFlow,1,10.5
+2024-01-15T10:00:00.000Z,GeneralEngFuelFlow,2,10.5
 2024-01-15T10:00:00.000Z,FuelSystemTankQuantity,0,22
 2024-01-15T10:00:00.000Z,FuelSystemTankQuantity,1,22
 2024-01-15T10:00:00.000Z,FuelTotalQuantity,0,44
@@ -34,8 +34,8 @@ timestamp,simvar_id,index,value
 2024-01-15T10:00:05.000Z,GeneralEngRpm,2,2400
 2024-01-15T10:00:05.000Z,ThrottleLeverPosition,1,75
 2024-01-15T10:00:05.000Z,ThrottleLeverPosition,2,75
-2024-01-15T10:00:05.000Z,RecipEngFuelFlow,1,10.5
-2024-01-15T10:00:05.000Z,RecipEngFuelFlow,2,10.5
+2024-01-15T10:00:05.000Z,GeneralEngFuelFlow,1,10.5
+2024-01-15T10:00:05.000Z,GeneralEngFuelFlow,2,10.5
 2024-01-15T10:00:05.000Z,FuelSystemTankQuantity,0,21.8
 2024-01-15T10:00:05.000Z,FuelSystemTankQuantity,1,21.8
 2024-01-15T10:00:05.000Z,FuelTankSelector,1,1
@@ -55,8 +55,8 @@ timestamp,simvar_id,index,value
 2024-01-15T10:00:10.000Z,GeneralEngRpm,2,2400
 2024-01-15T10:00:10.000Z,ThrottleLeverPosition,1,75
 2024-01-15T10:00:10.000Z,ThrottleLeverPosition,2,75
-2024-01-15T10:00:10.000Z,RecipEngFuelFlow,1,10.5
-2024-01-15T10:00:10.000Z,RecipEngFuelFlow,2,10.5
+2024-01-15T10:00:10.000Z,GeneralEngFuelFlow,1,10.5
+2024-01-15T10:00:10.000Z,GeneralEngFuelFlow,2,10.5
 2024-01-15T10:00:10.000Z,FuelSystemTankQuantity,0,21.6
 2024-01-15T10:00:10.000Z,FuelSystemTankQuantity,1,21.6
 2024-01-15T10:00:10.000Z,FuelTankSelector,1,1
@@ -76,8 +76,8 @@ timestamp,simvar_id,index,value
 2024-01-15T10:00:15.000Z,GeneralEngRpm,2,2400
 2024-01-15T10:00:15.000Z,ThrottleLeverPosition,1,75
 2024-01-15T10:00:15.000Z,ThrottleLeverPosition,2,75
-2024-01-15T10:00:15.000Z,RecipEngFuelFlow,1,10.5
-2024-01-15T10:00:15.000Z,RecipEngFuelFlow,2,10.5
+2024-01-15T10:00:15.000Z,GeneralEngFuelFlow,1,10.5
+2024-01-15T10:00:15.000Z,GeneralEngFuelFlow,2,10.5
 2024-01-15T10:00:15.000Z,FuelSystemTankQuantity,0,21.2
 2024-01-15T10:00:15.000Z,FuelSystemTankQuantity,1,21.6
 2024-01-15T10:00:15.000Z,FuelTankSelector,1,1
@@ -97,8 +97,8 @@ timestamp,simvar_id,index,value
 2024-01-15T10:00:20.000Z,GeneralEngRpm,2,2400
 2024-01-15T10:00:20.000Z,ThrottleLeverPosition,1,75
 2024-01-15T10:00:20.000Z,ThrottleLeverPosition,2,75
-2024-01-15T10:00:20.000Z,RecipEngFuelFlow,1,10.5
-2024-01-15T10:00:20.000Z,RecipEngFuelFlow,2,10.5
+2024-01-15T10:00:20.000Z,GeneralEngFuelFlow,1,10.5
+2024-01-15T10:00:20.000Z,GeneralEngFuelFlow,2,10.5
 2024-01-15T10:00:20.000Z,FuelSystemTankQuantity,0,20.8
 2024-01-15T10:00:20.000Z,FuelSystemTankQuantity,1,21.6
 2024-01-15T10:00:20.000Z,FuelTankSelector,1,1

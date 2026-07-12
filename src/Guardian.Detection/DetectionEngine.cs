@@ -105,6 +105,7 @@ public sealed class DetectionEngine
 
                 if (alert is not null)
                 {
+                    alert.Timestamp = now;
                     reg.LastTriggered = now;
                     Log.Information("Rule {RuleId} triggered: {Alert}", reg.Rule.RuleId, alert);
                     OnAlert?.Invoke(alert);

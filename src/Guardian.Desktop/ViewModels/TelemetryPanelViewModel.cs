@@ -82,7 +82,7 @@ public partial class TelemetryPanelViewModel : ObservableObject
         if (mp1 is not null) ManifoldPressure1 = mp1.Value.ToString("F1") + " inHg";
 
         // CHT (Rankine → Fahrenheit)
-        var cht1Val = snapshot.Get(SimVarId.RecipEngCylinderHeadTemperature, 1);
+        var cht1Val = snapshot.Get(SimVarId.EngCylinderHeadTemperature, 1);
         if (cht1Val is not null && eng is not null)
         {
             var chtF = UnitsConverter.RankineToFahrenheit(cht1Val.Value);
@@ -93,7 +93,7 @@ public partial class TelemetryPanelViewModel : ObservableObject
         }
 
         // EGT
-        var egt1Val = snapshot.Get(SimVarId.RecipEngExhaustGasTemperature, 1);
+        var egt1Val = snapshot.Get(SimVarId.EngExhaustGasTemperature, 1);
         if (egt1Val is not null)
         {
             var egtF = UnitsConverter.RankineToFahrenheit(egt1Val.Value);
@@ -139,7 +139,7 @@ public partial class TelemetryPanelViewModel : ObservableObject
             }
         }
 
-        var ff1 = snapshot.Get(SimVarId.RecipEngFuelFlow, 1);
+        var ff1 = snapshot.Get(SimVarId.GeneralEngFuelFlow, 1);
         if (ff1 is not null) FuelFlow1 = ff1.Value.ToString("F1") + " GPH";
 
         // Electrical

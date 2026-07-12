@@ -120,8 +120,10 @@ public sealed class R001_FuelCrossFeedMismatch : IDetectionRule
         {
             if (!combustion[i]) continue;
 
-            var tankId = (int)selectors[i];
-            if (tankId < 0) continue; // unknown selector
+            // Selector values are 1-based tank numbers (0 = OFF); tank quantity
+            // indices are 0-based, so shift by one.
+            var tankId = (int)selectors[i] - 1;
+            if (tankId < 0) continue; // selector OFF or unknown
 
             if (!enginesByTank.ContainsKey(tankId))
                 enginesByTank[tankId] = new List<int>();

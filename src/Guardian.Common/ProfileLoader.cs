@@ -114,7 +114,7 @@ public sealed class ProfileLoader
     /// Converts pilot-friendly units in the profile to native SimConnect units.
     /// Fahrenheit → Rankine for temperatures, per-minute rates → per-second.
     /// </summary>
-    internal static void ConvertUnits(AircraftProfile profile)
+    public static void ConvertUnits(AircraftProfile profile)
     {
         var eng = profile.Engine;
 

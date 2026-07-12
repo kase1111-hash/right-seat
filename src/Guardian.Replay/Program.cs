@@ -24,10 +24,11 @@ try
 {
     var scenariosDir = args.Length > 0 && !args[0].StartsWith("--")
         ? args[0]
-        : Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "training", "scenarios");
+        : Path.Combine(Environment.CurrentDirectory, "training", "scenarios");
 
     var configPath = GetArg(args, "--config")
-        ?? Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "config", "guardian.toml");
+        ?? PathResolver.FindConfigFile()
+        ?? Path.Combine(Environment.CurrentDirectory, "config", "guardian.toml");
 
     var profileId = GetArg(args, "--profile") ?? "generic_single_piston";
     var speed = double.TryParse(GetArg(args, "--speed"), out var s) ? s : 0;
@@ -44,7 +45,7 @@ try
     if (Directory.Exists(profilesDir))
         profileLoader.LoadProfiles(profilesDir);
 
-    var profile = profileLoader.Profiles.FirstOrDefault(p => p.AircraftId == profileId)
+    var profile = profileLoader.Profiles.Values.FirstOrDefault(p => p.AircraftId == profileId)
         ?? new AircraftProfile { AircraftId = profileId, DisplayName = profileId };
 
     ProfileLoader.ConvertUnits(profile);
@@ -86,7 +87,21 @@ try
             continue;
         }
 
-        var engine = new ScenarioReplayEngine(config, profile);
+        // Load expected results first so the scenario can name its own profile
+        ExpectedResults? expected = File.Exists(expectedFile) ? ExpectedResults.Load(expectedFile) : null;
+
+        var scenarioProfile = profile;
+        if (expected?.Profile is { Length: > 0 } profileOverride)
+        {
+            scenarioProfile = profileLoader.Profiles.Values.FirstOrDefault(p => p.AircraftId == profileOverride)
+                ?? profile;
+            if (scenarioProfile.AircraftId != profileOverride)
+                Log.Warning("  Profile '{Profile}' not found, using {Fallback}", profileOverride, scenarioProfile.AircraftId);
+            else
+                Log.Information("  Profile: {Profile}", scenarioProfile.AircraftId);
+        }
+
+        var engine = new ScenarioReplayEngine(config, scenarioProfile);
         var result = engine.Replay(snapshots, speed);
 
         Log.Information("  {Count} snapshots, {Duration:F0}s duration, {Alerts} alerts delivered",
@@ -100,9 +115,8 @@ try
         }
 
         // Validate against expected results (if available)
-        if (File.Exists(expectedFile))
+        if (expected is not null)
         {
-            var expected = ExpectedResults.Load(expectedFile);
             var report = validator.Validate(result, expected);
             reports.Add(report);
 

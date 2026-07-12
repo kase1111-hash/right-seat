@@ -141,9 +141,14 @@ public sealed class R003_EngineTemperatureTrend : IDetectionRule
     {
         if (redlineValue <= 0) return null; // no redline defined
 
-        double pctOfRedline = currentValue / redlineValue;
         double tempF = UnitsConverter.RankineToFahrenheit(rawRankine);
         double redlineF = UnitsConverter.RankineToFahrenheit(redlineValue);
+        if (redlineF <= 0) return null;
+
+        // Percent-of-redline must be computed in Fahrenheit space. The Rankine
+        // ratio is inflated by the absolute-zero offset (a normal 1420°F EGT is
+        // 91% of a 1600°F redline in Rankine but only 89% in Fahrenheit).
+        double pctOfRedline = tempF / redlineF;
 
         if (pctOfRedline >= CriticalPct)
         {

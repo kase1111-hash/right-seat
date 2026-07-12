@@ -21,7 +21,8 @@ public class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // Load config
-            var configPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "config", "guardian.toml");
+            var configPath = PathResolver.FindConfigFile()
+                ?? Path.Combine(Environment.CurrentDirectory, "config", "guardian.toml");
             var config = GuardianConfig.Load(configPath);
 
             // Create the guardian engine service that runs the backend pipeline

@@ -144,13 +144,19 @@ internal sealed class TimeSeries
 
     /// <summary>
     /// Computes rate of change in units-per-second using linear regression
-    /// over the specified window. Returns null if insufficient data (< 2 points).
+    /// over the specified window. Returns null if insufficient data:
+    /// fewer than 2 points, or the recorded data covers less than 75% of
+    /// the requested window — a trend over N seconds cannot be asserted
+    /// from a much shorter sample.
     /// </summary>
     public double? RateOfChange(TimeSpan window)
     {
         lock (_lock)
         {
             if (_entries.Count < 2) return null;
+
+            var dataSpan = _entries[^1].Timestamp - _entries[0].Timestamp;
+            if (dataSpan < window * 0.75) return null;
 
             var cutoff = _entries[^1].Timestamp - window;
             var referenceTime = _entries[^1].Timestamp;

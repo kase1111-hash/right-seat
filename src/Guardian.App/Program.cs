@@ -19,7 +19,8 @@ public static class Program
         Log.Information("Flight Guardian starting...");
 
         // Load configuration
-        var configPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "config", "guardian.toml");
+        var configPath = PathResolver.FindConfigFile()
+            ?? Path.Combine(Environment.CurrentDirectory, "config", "guardian.toml");
         if (args.Length > 0 && args[0] == "--config")
             configPath = args[1];
 
@@ -28,7 +29,8 @@ public static class Program
             config.Sensitivity, string.Join(", ", config.EnabledRules));
 
         // Load aircraft profiles
-        var profilesPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "config", "profiles");
+        var profilesPath = PathResolver.FindProfilesDirectory()
+            ?? Path.Combine(Environment.CurrentDirectory, "config", "profiles");
         var profileLoader = new ProfileLoader();
         profileLoader.LoadProfiles(profilesPath);
         Log.Information("Loaded {Count} aircraft profiles", profileLoader.Profiles.Count);

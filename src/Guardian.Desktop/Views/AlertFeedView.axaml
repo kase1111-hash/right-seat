@@ -32,7 +32,10 @@
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="vm:AlertEntryViewModel">
                     <Border Margin="0,2" Padding="8,6" CornerRadius="4"
-                            Classes="{Binding SeverityClass}">
+                            Classes.severity-critical="{Binding IsCritical}"
+                            Classes.severity-warning="{Binding IsWarning}"
+                            Classes.severity-advisory="{Binding IsAdvisory}"
+                            Classes.severity-info="{Binding IsInfo}">
                         <Grid ColumnDefinitions="70,50,*" RowDefinitions="Auto,Auto">
                             <!-- Row 1: Time + Severity + Rule ID -->
                             <TextBlock Grid.Row="0" Grid.Column="0"

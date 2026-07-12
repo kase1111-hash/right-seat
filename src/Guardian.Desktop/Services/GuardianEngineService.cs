@@ -97,7 +97,8 @@ public sealed class GuardianEngineService : IDisposable
     public void Start()
     {
         // Load profiles
-        var profilesPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "config", "profiles");
+        var profilesPath = PathResolver.FindProfilesDirectory()
+            ?? Path.Combine(Environment.CurrentDirectory, "config", "profiles");
         _profileLoader.LoadProfiles(profilesPath);
         Log.Information("Loaded {Count} aircraft profiles", _profileLoader.Profiles.Count);
 
@@ -112,8 +113,8 @@ public sealed class GuardianEngineService : IDisposable
         _simConnect.OnSnapshot += HandleSnapshot;
         _simConnect.OnStateChanged += state =>
         {
-            OnConnectionStateChanged?.Invoke(state);
-            _efbState?.SetConnected(state == "Connected");
+            OnConnectionStateChanged?.Invoke(state.ToString());
+            _efbState?.SetConnected(state == ConnectionState.Connected);
         };
 
         _simConnect.Start();
@@ -221,10 +222,10 @@ public sealed class GuardianEngineService : IDisposable
     {
         foreach (var key in snapshot.Keys)
         {
-            var value = snapshot.Get(key.SimVarId, key.Index);
+            var value = snapshot.Get(key.Id, key.Index);
             if (value is not null)
             {
-                _recordingWriter?.WriteLine($"{snapshot.Timestamp:O},{key.SimVarId},{key.Index},{value.Value:F6}");
+                _recordingWriter?.WriteLine($"{snapshot.Timestamp:O},{key.Id},{key.Index},{value.Value:F6}");
             }
         }
     }
