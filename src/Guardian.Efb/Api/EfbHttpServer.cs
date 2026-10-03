@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -20,7 +21,7 @@ namespace Guardian.Efb.Api;
 ///   POST /api/silence      — silence critical alarm
 ///
 /// Runs on configurable port (default 9847).
-/// CORS headers are set to allow EFB sandbox fetch() calls.
+/// CORS headers are set to allow EFB sandbox fetch() calls (see <see cref="IsAllowedOrigin"/>).
 /// </summary>
 public sealed class EfbHttpServer : IDisposable
 {
@@ -33,7 +34,10 @@ public sealed class EfbHttpServer : IDisposable
 
     // State providers (set by the host application)
     private readonly EfbStateProvider _state;
-    private readonly string _allowedOrigin;
+
+    // Distinct untrusted origins already logged (capped so it can't grow without bound)
+    private readonly ConcurrentDictionary<string, byte> _loggedRejectedOrigins = new();
+    private const int MaxLoggedRejectedOrigins = 32;
 
     // Rate limiting
     private readonly SemaphoreSlim _concurrencyLimiter = new(10);
@@ -46,7 +50,6 @@ public sealed class EfbHttpServer : IDisposable
     {
         _port = config.HttpPort;
         _state = stateProvider;
-        _allowedOrigin = $"http://localhost:{_port}";
         _listener = new HttpListener();
         // Security note: HTTP-only is intentional — the EFB server binds exclusively
         // to localhost/127.0.0.1 and is not reachable from the network. If network
@@ -101,10 +104,21 @@ public sealed class EfbHttpServer : IDisposable
         var request = context.Request;
         var response = context.Response;
 
-        // CORS headers for EFB sandbox
-        response.AddHeader("Access-Control-Allow-Origin", _allowedOrigin);
-        response.AddHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-        response.AddHeader("Access-Control-Allow-Headers", "Content-Type");
+        // CORS headers for EFB sandbox — reflect the caller's origin only if trusted
+        var origin = request.Headers["Origin"];
+        if (IsAllowedOrigin(origin))
+        {
+            response.AddHeader("Access-Control-Allow-Origin", origin!);
+            response.AddHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+            response.AddHeader("Access-Control-Allow-Headers", "Content-Type");
+        }
+        else if (origin is not null
+                 && _loggedRejectedOrigins.Count < MaxLoggedRejectedOrigins
+                 && _loggedRejectedOrigins.TryAdd(origin, 0))
+        {
+            Log.Warning("EFB API request from untrusted origin {Origin} — CORS access denied", origin);
+        }
+        response.AddHeader("Vary", "Origin");
 
         if (request.HttpMethod == "OPTIONS")
         {
@@ -202,6 +216,23 @@ public sealed class EfbHttpServer : IDisposable
         {
             _concurrencyLimiter.Release();
         }
+    }
+
+    /// <summary>
+    /// Whether a browser page from <paramref name="origin"/> may read API responses.
+    /// Allowed: the MSFS EFB tablet (pages served from coui://) and pages on this
+    /// machine (localhost / loopback, any port — e.g. an EFB dev server).
+    /// Arbitrary websites open in the pilot's browser are refused.
+    /// </summary>
+    public static bool IsAllowedOrigin(string? origin)
+    {
+        if (string.IsNullOrEmpty(origin) || !Uri.TryCreate(origin, UriKind.Absolute, out var uri))
+            return false;
+
+        if (uri.Scheme.Equals("coui", StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps) && uri.IsLoopback;
     }
 
     private static async Task RespondJson(HttpListenerResponse response, object data)
