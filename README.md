@@ -94,7 +94,7 @@ right-seat/
 ├── docs/
 │   ├── rules/                  # Detailed documentation per detection rule
 │   └── simvars.md              # Complete SimVar reference and polling config
-└── tests/                      # xUnit test suites (226 tests)
+└── tests/                      # xUnit test suites (246 tests)
 ```
 
 ## Getting Started
