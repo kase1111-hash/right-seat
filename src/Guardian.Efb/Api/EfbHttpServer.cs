@@ -149,6 +149,18 @@ public sealed class EfbHttpServer : IDisposable
                 await RespondJson(response, new { error = "Rate limit exceeded" });
                 return;
             }
+            // CSRF guard: a "simple" cross-site POST (e.g. text/plain body) is sent by the
+            // browser without a preflight, so CORS alone can't stop a malicious page from
+            // changing settings or silencing alarms. Browsers always attach Origin to such
+            // requests; refuse any that isn't trusted. Requests with no Origin (curl,
+            // native tools) are not from a web page and are allowed.
+            if (request.HttpMethod == "POST" && origin is not null && !IsAllowedOrigin(origin))
+            {
+                response.StatusCode = 403;
+                await RespondJson(response, new { error = "Origin not allowed" });
+                return;
+            }
+
             var path = request.Url?.AbsolutePath ?? "/";
 
             switch (path)

@@ -46,7 +46,7 @@ public class EfbHttpServerTests
     [Fact]
     public async Task Status_FromEfbOrigin_ReflectsOrigin()
     {
-        var (server, client, baseUrl) = StartServer();
+        var (server, client, baseUrl, _) = StartServer();
         using (server)
         using (client)
         {
@@ -63,7 +63,7 @@ public class EfbHttpServerTests
     [Fact]
     public async Task SettingsPreflight_FromEfbOrigin_Allowed()
     {
-        var (server, client, baseUrl) = StartServer();
+        var (server, client, baseUrl, _) = StartServer();
         using (server)
         using (client)
         {
@@ -83,7 +83,7 @@ public class EfbHttpServerTests
     [Fact]
     public async Task Settings_FromEfbOrigin_Applied()
     {
-        var (server, client, baseUrl) = StartServer();
+        var (server, client, baseUrl, _) = StartServer();
         using (server)
         using (client)
         {
@@ -103,7 +103,7 @@ public class EfbHttpServerTests
     [Fact]
     public async Task Status_FromUntrustedOrigin_NoCorsHeader()
     {
-        var (server, client, baseUrl) = StartServer();
+        var (server, client, baseUrl, _) = StartServer();
         using (server)
         using (client)
         {
@@ -116,9 +116,66 @@ public class EfbHttpServerTests
         }
     }
 
+    // ── CSRF guard ──
+
+    [Fact]
+    public async Task SimplePost_FromUntrustedOrigin_RejectedAndNotApplied()
+    {
+        var (server, client, baseUrl, config) = StartServer();
+        using (server)
+        using (client)
+        {
+            config.AudioEnabled = true;
+
+            // text/plain is a CORS "simple" request: browsers send it with no preflight
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}/api/settings")
+            {
+                Content = new StringContent("{\"audio_enabled\":false}", Encoding.UTF8, "text/plain"),
+            };
+            request.Headers.Add("Origin", "https://example.com");
+
+            var response = await client.SendAsync(request);
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.True(config.AudioEnabled);
+        }
+    }
+
+    [Fact]
+    public async Task Silence_FromUntrustedOrigin_Rejected()
+    {
+        var (server, client, baseUrl, _) = StartServer();
+        using (server)
+        using (client)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}/api/silence");
+            request.Headers.Add("Origin", "https://example.com");
+
+            var response = await client.SendAsync(request);
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+    }
+
+    [Fact]
+    public async Task Post_WithoutOrigin_Allowed()
+    {
+        var (server, client, baseUrl, config) = StartServer();
+        using (server)
+        using (client)
+        {
+            // Non-browser clients (curl, native tools) send no Origin header
+            var response = await client.PostAsync($"{baseUrl}/api/settings",
+                new StringContent("{\"audio_enabled\":false}", Encoding.UTF8, "application/json"));
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.False(config.AudioEnabled);
+        }
+    }
+
     // ── Helpers ──
 
-    private static (EfbHttpServer Server, HttpClient Client, string BaseUrl) StartServer()
+    private static (EfbHttpServer Server, HttpClient Client, string BaseUrl, GuardianConfig Config) StartServer()
     {
         var config = new GuardianConfig { HttpPort = GetFreePort() };
         var detection = new DetectionEngine();
@@ -133,7 +190,7 @@ public class EfbHttpServerTests
         server.Start();
 
         var client = new HttpClient(new HttpClientHandler { UseProxy = false });
-        return (server, client, $"http://localhost:{config.HttpPort}");
+        return (server, client, $"http://localhost:{config.HttpPort}", config);
     }
 
     private static int GetFreePort()
